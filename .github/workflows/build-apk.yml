@@ -21,17 +21,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Debug Environment
+      - name: Install dependencies
         run: |
-          node -v
-          npm -v
-          pwd
-          ls -la
+          npm install
 
-      - name: Install dependencies and Capacitor
+      - name: Initialize and Sync Capacitor
         run: |
-          npm install -g @capacitor/cli
-          npm install @capacitor/core @capacitor/android
           npx cap init "Pemutar Twitch" com.twitch.pemutar --web-dir "." --yes || true
           npx cap add android || true
           npx cap sync android
