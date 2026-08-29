@@ -5,12 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pemutar Twitch</title>
     <style>
-        body { font-family: sans-serif; background: #0e0e10; color: #efeff1; text-align: center; padding-top: 50px; }
-        h1 { color: #9146ff; }
+        body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; padding: 10px; margin: 0; box-sizing: border-box; }
+        .container { margin-top: 5px; margin-bottom: 10px; display: block !important; visibility: visible !important; opacity: 1 !important; }
+        input { width: 70%; padding: 8px 12px; font-size: 14px; border-radius: 5px; border: none; outline: none; box-sizing: border-box; display: inline-block !important; background: #242424 !important; color: #fff !important; }
+        button { padding: 8px 15px; font-size: 14px; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; display: inline-block !important; }
+        .btn-twitch { background: #9146ff; }
+        .btn-twitch:hover { background: #772ce8; }
+        #player-container { width: 100%; margin-top: 5px; display: flex; justify-content: center; }
+        #player-box { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        #twitch-embed, #youtube-embed { width: 100%; height: 100%; }
+        .badge {
+            position: absolute;
+            top: 35px;
+            right: 15px;
+            background: rgba(145, 70, 255, 0.85);
+            color: white;
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            z-index: 99;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
     </style>
 </head>
 <body>
-    <h1>Pemutar Twitch</h1>
-    <p>Aplikasi Twitch Player aktif!</p>
+
+    <div class="container">
+        <input type="text" id="streamInput" placeholder="Cth: shroud atau https://youtu.be/..."><br>
+        <button class="btn-twitch" onclick="playStream()">Putar Otomatis</button>
+    </div>
+
+    <div id="player-container">
+        <div id="player-box">
+            <p style="color: #666; margin-top: 100px;">Masukkan nama channel/link lalu klik Putar</p>
+        </div>
+    </div>
+
+    <!-- Twitch Embed Script -->
+    <script src="https://embed.twitch.tv/embed/v1.js"></script>
+    <script>
+        function playStream() {
+            const inputVal = document.getElementById('streamInput').value.trim();
+            const playerBox = document.getElementById('player-box');
+
+            if (!inputVal) {
+                alert('Silakan masukkan nama channel Twitch atau link YouTube!');
+                return;
+            }
+
+            // Deteksi apakah ini URL YouTube
+            if (inputVal.includes('youtube.com') || inputVal.includes('youtu.be')) {
+                let videoId = '';
+                if (inputVal.includes('youtu.be/')) {
+                    videoId = inputVal.split('youtu.be/')[1].split('?')[0];
+                } else if (inputVal.includes('watch?v=')) {
+                    videoId = inputVal.split('watch?v=')[1].split('&')[0];
+                } else if (inputVal.includes('embed/')) {
+                    videoId = inputVal.split('embed/')[1].split('?')[0];
+                }
+
+                if (videoId) {
+                    playerBox.innerHTML = `
+                        <div style="position:relative; width:100%; height:100%;">
+                            <div class="badge">▶ YouTube</div>
+                            <iframe id="youtube-embed" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%; height:100%;"></iframe>
+                        </div>
+                    `;
+                } else {
+                    alert('Format link YouTube tidak valid!');
+                }
+            } else {
+                // Dianggap sebagai Channel Twitch
+                // Ambil hostname saat ini untuk parent parameter
+                const parentDomain = window.location.hostname || "localhost";
+                
+                playerBox.innerHTML = `
+                    <div style="position:relative; width:100%; height:100%;">
+                        <div class="badge">🟣 Twitch</div>
+                        <div id="twitch-embed" style="width:100%; height:100%;"></div>
+                    </div>
+                `;
+
+                // Hapus isi sebelumnya jika ada
+                playerBox.querySelector('#twitch-embed').innerHTML = '';
+
+                new Twitch.Embed("twitch-embed", {
+                    width: "100%",
+                    height: "100%",
+                    channel: inputVal,
+                    parent: [parentDomain, "localhost", "127.0.0.1", "github.io", "drgx2x.github.io"]
+                });
+            }
+        }
+    </script>
 </body>
 </html>
