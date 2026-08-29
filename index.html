@@ -14,14 +14,11 @@
         .badge-twitch { background: #9146FF; }
         .badge-youtube { background: #FF0000; }
         #player-container { display: flex; justify-content: center; width: 100%; }
-        #player-box { width: 100%; max-width: 650px; height: 85vh; position: relative; display: flex; flex-direction: column; }
+        #player-box { width: 100%; max-width: 900px; height: 90vh; position: relative; display: flex; flex-direction: column; }
         iframe { width: 100%; border: none; border-radius: 8px; }
-        .yt-player-wrap { height: 40%; width: 100%; min-height: 200px; }
-        .yt-comments-wrap { height: 58%; width: 100%; margin-top: 5px; background: #0f0f0f; border: 1px solid #272727; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; text-align: left; }
+        .yt-player-wrap { height: 55%; width: 100%; min-height: 280px; }
+        .yt-comments-wrap { height: 43%; width: 100%; margin-top: 5px; background: #0f0f0f; border: 1px solid #272727; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; text-align: left; }
         .yt-comments-wrap h4 { margin: 0; padding: 8px 12px; font-size: 12px; color: #aaa; background: #181818; border-bottom: 1px solid #272727; }
-        .comment-item { font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #2a2a2a; padding-bottom: 8px; }
-        .comment-author { font-weight: bold; color: #3ea6ff; margin-bottom: 2px; }
-        .comment-text { color: #ddd; word-break: break-word; }
     </style>
 </head>
 <body>
@@ -80,7 +77,6 @@
                     channelName = parts[1].split("/")[0].split("?")[0];
                 }
                 
-                playerbox_height = '85vh';
                 playerBox.innerHTML = `
                     <div class="platform-badge badge-twitch">Twitch Player</div>
                     <div id="twitch-embed" style="width:100%; height:calc(100% - 25px);"></div>
@@ -106,7 +102,6 @@
             let commentsBox = document.getElementById('yt-comments-box');
             let currentHost = window.location.hostname || "localhost";
             
-            // Parameter dark_theme=1 agar chat YouTube bernuansa gelap otomatis sesuai permintaan
             commentsBox.innerHTML = `
                 <h4>Live Chat YouTube (Dark Theme)</h4>
                 <iframe src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${currentHost}&dark_theme=1" style="width:100%; height:100%; border:none; background:#0f0f0f;"></iframe>
