@@ -9,9 +9,8 @@
         .container { margin-top: 10px; }
         input { width: 70%; padding: 10px; font-size: 14px; border-radius: 5px; border: none; outline: none; box-sizing: border-box; }
         button { padding: 10px 15px; font-size: 14px; background: #9146FF; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; }
-        #player-container { margin-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        #twitch-embed { width: 100%; max-width: 400px; height: 250px; }
-        #twitch-chat { width: 100%; max-width: 400px; height: 300px; display: none; }
+        #player-container { margin-top: 15px; display: flex; justify-content: center; }
+        #twitch-embed { width: 100%; max-width: 500px; height: 450px; }
     </style>
 </head>
 <body>
@@ -24,7 +23,6 @@
 
     <div id="player-container">
         <div id="twitch-embed"></div>
-        <iframe id="twitch-chat" src="" frameborder="0"></iframe>
     </div>
 
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
@@ -41,16 +39,11 @@
             document.getElementById('twitch-embed').innerHTML = "";
             embed = new Twitch.Embed("twitch-embed", {
                 width: "100%",
-                height: "250",
+                height: "450",
                 channel: channelName,
-                parent: ["localhost", "127.0.0.1", "capacitor.localhost"]
+                layout: "video-with-chat",
+                parent: ["localhost", "127.0.0.1", "capacitor.localhost", "drgx2x.github.io"]
             });
-
-            // Tampilkan chat Twitch di bawah video
-            let chatFrame = document.getElementById('twitch-chat');
-            let parentDomain = window.location.hostname || "localhost";
-            chatFrame.src = `https://www.twitch.tv/embed/${channelName}/chat?parent=${parentDomain}`;
-            chatFrame.style.display = "block";
 
             // Auto lock orientation to landscape on fullscreen if supported (Android/Mobile)
             if (screen.orientation && screen.orientation.lock) {
