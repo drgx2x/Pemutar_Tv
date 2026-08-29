@@ -10,7 +10,6 @@
         input { width: 70%; padding: 10px; font-size: 14px; border-radius: 5px; border: none; outline: none; box-sizing: border-box; }
         button { padding: 10px 15px; font-size: 14px; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; }
         .btn-twitch { background: #9146FF; }
-        .btn-youtube { background: #FF0000; }
         .platform-badge { display: inline-block; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 8px; }
         .badge-twitch { background: #9146FF; }
         .badge-youtube { background: #FF0000; }
@@ -25,7 +24,7 @@
         <h3>Multi-Platform Stream Player</h3>
         <p style="font-size: 12px; color: #aaa; margin-top: -5px;">Masukkan link atau nama channel/video (Twitch / YouTube)</p>
         <input type="text" id="streamInput" placeholder="Cth: shroud atau https://youtu.be/..."><br>
-        <button class="btn-twitch" onclick="playStream('auto')">Putar Otomatis</button>
+        <button class="btn-twitch" onclick="playStream()">Putar Otomatis</button>
     </div>
 
     <div id="player-container">
@@ -44,32 +43,25 @@
             let playerBox = document.getElementById('player-box');
             playerBox.innerHTML = '';
 
-            // Deteksi apakah ini YouTube atau Twitch
             let isYouTube = false;
             let ytId = '';
 
             if (input.includes('youtube.com') || input.includes('youtu.be')) {
                 isYouTube = true;
                 ytId = extractYouTubeId(input);
-            } else if (input.includes('twitch.tv')) {
-                isYouTube = false;
             } else {
-                // Jika hanya teks biasa (tanpa URL), anggap Twitch channel, tapi jika format ID video YT pendek, bisa dideteksi
-                // Default ke Twitch jika tidak ada indikasi URL YouTube
                 isYouTube = false;
             }
 
             if (isYouTube && ytId) {
-                // Render YouTube Iframe
                 playerBox.innerHTML = `
                     <div class="platform-badge badge-youtube">YouTube Player</div>
-                    <iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&enablejsapi=1" 
+                    <iframe id="yt-iframe" src="https://www.youtube.com/embed/${ytId}?autoplay=1&enablejsapi=1" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                         allowfullscreen>
                     </iframe>
                 `;
             } else {
-                // Render Twitch Embed
                 let channelName = input;
                 if (input.includes("twitch.tv/")) {
                     let parts = input.split("twitch.tv/");
@@ -95,6 +87,25 @@
             let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             let match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // Auto lock orientation to landscape on fullscreen (Mobile/Android WebView/Capacitor)
+        if (screen.orientation && screen.orientation.lock) {
+            document.addEventListener('fullscreenchange', () => {
+                if (document.fullscreenElement) {
+                    screen.orientation.lock('landscape').catch(() => {});
+                } else {
+                    screen.orientation.unlock().catch(() => {});
+                }
+            });
+            
+            document.addEventListener('webkitfullscreenchange', () => {
+                if (document.webkitFullscreenElement) {
+                    screen.orientation.lock('landscape').catch(() => {});
+                } else {
+                    screen.orientation.unlock().catch(() => {});
+                }
+            });
         }
     </script>
 </body>
