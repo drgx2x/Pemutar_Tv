@@ -3,68 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Android Player</title>
+    <title>Stream Player (Twitch & YouTube)</title>
     <style>
         body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; padding: 15px; margin: 0; }
         .container { margin-top: 10px; }
         input { width: 70%; padding: 10px; font-size: 14px; border-radius: 5px; border: none; outline: none; box-sizing: border-box; }
-        button { padding: 10px 15px; font-size: 14px; background: #9146FF; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; }
+        button { padding: 10px 15px; font-size: 14px; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; }
+        .btn-twitch { background: #9146FF; }
+        .btn-youtube { background: #FF0000; }
+        .platform-badge { display: inline-block; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 8px; }
+        .badge-twitch { background: #9146FF; }
+        .badge-youtube { background: #FF0000; }
         #player-container { margin-top: 15px; display: flex; justify-content: center; }
-        #twitch-embed { width: 100%; max-width: 500px; height: 650px; }
+        #player-box { width: 100%; max-width: 600px; height: 650px; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h3>Twitch Stream Player</h3>
-        <input type="text" id="channelInput" placeholder="Nama channel (cth: shroud)"><br>
-        <button onclick="playStream()">Putar Stream</button>
+        <h3>Multi-Platform Stream Player</h3>
+        <p style="font-size: 12px; color: #aaa; margin-top: -5px;">Masukkan link atau nama channel/video (Twitch / YouTube)</p>
+        <input type="text" id="streamInput" placeholder="Cth: shroud atau https://youtu.be/..."><br>
+        <button class="btn-twitch" onclick="playStream('auto')">Putar Otomatis</button>
     </div>
 
     <div id="player-container">
-        <div id="twitch-embed"></div>
+        <div id="player-box">
+            <p style="color: #666; margin-top: 100px;">Masukkan link atau channel di atas untuk mulai menonton</p>
+        </div>
     </div>
 
+    <!-- Twitch Embed SDK -->
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
-        let embed;
         function playStream() {
-            let input = document.getElementById('channelInput').value.trim();
+            let input = document.getElementById('streamInput').value.trim();
             if (!input) return;
-            let channelName = input;
-            if (input.includes("twitch.tv/")) {
-                let parts = input.split("twitch.tv/");
-                channelName = parts[1].split("/")[0];
-            }
-            document.getElementById('twitch-embed').innerHTML = "";
-            embed = new Twitch.Embed("twitch-embed", {
-                width: "100%",
-                height: "650",
-                channel: channelName,
-                layout: "video-with-chat",
-                parent: ["localhost", "127.0.0.1", "capacitor.localhost", "drgx2x.github.io"]
-            });
 
-            // Auto lock orientation to landscape on fullscreen if supported (Android/Mobile)
-            if (screen.orientation && screen.orientation.lock) {
-                let playerEl = document.getElementById('twitch-embed');
+            let playerBox = document.getElementById('player-box');
+            playerBox.innerHTML = '';
+
+            // Deteksi apakah ini YouTube atau Twitch
+            let isYouTube = false;
+            let ytId = '';
+
+            if (input.includes('youtube.com') || input.includes('youtu.be')) {
+                isYouTube = true;
+                ytId = extractYouTubeId(input);
+            } else if (input.includes('twitch.tv')) {
+                isYouTube = false;
+            } else {
+                // Jika hanya teks biasa (tanpa URL), anggap Twitch channel, tapi jika format ID video YT pendek, bisa dideteksi
+                // Default ke Twitch jika tidak ada indikasi URL YouTube
+                isYouTube = false;
+            }
+
+            if (isYouTube && ytId) {
+                // Render YouTube Iframe
+                playerBox.innerHTML = `
+                    <div class="platform-badge badge-youtube">YouTube Player</div>
+                    <iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&enablejsapi=1" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                `;
+            } else {
+                // Render Twitch Embed
+                let channelName = input;
+                if (input.includes("twitch.tv/")) {
+                    let parts = input.split("twitch.tv/");
+                    channelName = parts[1].split("/")[0].split("?")[0];
+                }
                 
-                document.addEventListener('fullscreenchange', () => {
-                    if (document.fullscreenElement) {
-                        screen.orientation.lock('landscape').catch(() => {});
-                    } else {
-                        screen.orientation.unlock().catch(() => {});
-                    }
-                });
-                
-                document.addEventListener('webkitfullscreenchange', () => {
-                    if (document.webkitFullscreenElement) {
-                        screen.orientation.lock('landscape').catch(() => {});
-                    } else {
-                        screen.orientation.unlock().catch(() => {});
-                    }
+                playerBox.innerHTML = `
+                    <div class="platform-badge badge-twitch">Twitch Player</div>
+                    <div id="twitch-embed" style="width:100%; height:calc(100% - 25px);"></div>
+                `;
+
+                new Twitch.Embed("twitch-embed", {
+                    width: "100%",
+                    height: "100%",
+                    channel: channelName,
+                    layout: "video-with-chat",
+                    parent: ["localhost", "127.0.0.1", "capacitor.localhost", "drgx2x.github.io"]
                 });
             }
+        }
+
+        function extractYouTubeId(url) {
+            let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            let match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
         }
     </script>
 </body>
