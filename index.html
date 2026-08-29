@@ -10,7 +10,7 @@
         input { width: 70%; padding: 10px; font-size: 14px; border-radius: 5px; border: none; outline: none; box-sizing: border-box; }
         button { padding: 10px 15px; font-size: 14px; background: #9146FF; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; }
         #player-container { margin-top: 15px; display: flex; justify-content: center; }
-        #twitch-embed { width: 100%; max-width: 500px; height: 600px; }
+        #twitch-embed { width: 100%; max-width: 500px; height: 650px; }
     </style>
 </head>
 <body>
@@ -39,7 +39,7 @@
             document.getElementById('twitch-embed').innerHTML = "";
             embed = new Twitch.Embed("twitch-embed", {
                 width: "100%",
-                height: "600",
+                height: "650",
                 channel: channelName,
                 layout: "video-with-chat",
                 parent: ["localhost", "127.0.0.1", "capacitor.localhost", "drgx2x.github.io"]
