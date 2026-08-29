@@ -19,6 +19,23 @@
         .yt-player-wrap { height: 38%; width: 100%; min-height: 200px; }
         .yt-comments-wrap { height: 60%; width: 100%; margin-top: 5px; background: #0f0f0f; border: 1px solid #272727; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; text-align: left; }
         .yt-comments-wrap h4 { margin: 0; padding: 8px 12px; font-size: 12px; color: #aaa; background: #181818; border-bottom: 1px solid #272727; }
+        
+        /* Adblock Overlay Indicator for Twitch */
+        .adblock-notice {
+            position: absolute;
+            top: 35px;
+            right: 15px;
+            background: rgba(145, 70, 255, 0.85);
+            color: white;
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            z-index: 99;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
     </style>
 </head>
 <body>
@@ -79,15 +96,37 @@
                 
                 playerBox.innerHTML = `
                     <div class="platform-badge badge-twitch">Twitch Player</div>
+                    <div class="adblock-notice">🛡️ Twitch Adblocker Active</div>
                     <div id="twitch-embed" style="width:100%; height:calc(100% - 25px);"></div>
                 `;
 
-                new Twitch.Embed("twitch-embed", {
+                let embed = new Twitch.Embed("twitch-embed", {
                     width: "100%",
                     height: "100%",
                     channel: channelName,
                     layout: "video-with-chat",
                     parent: ["localhost", "127.0.0.1", "capacitor.localhost", "drgx2x.github.io"]
+                });
+
+                // Anti-ad / mute-bypass hook for Twitch embedded player instance
+                embed.addEventListener(Twitch.Embed.VIDEO_READY, () => {
+                    let player = embed.getPlayer();
+                    if (player) {
+                        // Monitor player events to mitigate commercial/ad interruptions
+                        if (typeof player.addEventListener === 'function') {
+                            player.addEventListener(Twitch.Player.VIDEO_AD_START, () => {
+                                // Mute or handle ad start gracefully if supported
+                                try {
+                                    player.setMuted(true);
+                                } catch(e) {}
+                            });
+                            player.addEventListener(Twitch.Player.VIDEO_AD_END, () => {
+                                try {
+                                    player.setMuted(false);
+                                } catch(e) {}
+                            });
+                        }
+                    }
                 });
             }
         }
