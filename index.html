@@ -43,6 +43,27 @@
                 channel: channelName,
                 parent: ["localhost", "127.0.0.1", "capacitor.localhost"]
             });
+
+            // Auto lock orientation to landscape on fullscreen if supported (Android/Mobile)
+            if (screen.orientation && screen.orientation.lock) {
+                let playerEl = document.getElementById('twitch-embed');
+                
+                document.addEventListener('fullscreenchange', () => {
+                    if (document.fullscreenElement) {
+                        screen.orientation.lock('landscape').catch(() => {});
+                    } else {
+                        screen.orientation.unlock().catch(() => {});
+                    }
+                });
+                
+                document.addEventListener('webkitfullscreenchange', () => {
+                    if (document.webkitFullscreenElement) {
+                        screen.orientation.lock('landscape').catch(() => {});
+                    } else {
+                        screen.orientation.unlock().catch(() => {});
+                    }
+                });
+            }
         }
     </script>
 </body>
