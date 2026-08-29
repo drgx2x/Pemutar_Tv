@@ -1,2 +1,3 @@
 # Pemutar_Twitch
-pemutar twitch sederhana
+
+Pemutar Twitch sederhana yang dibuat untuk memudahkan streaming langsung.
