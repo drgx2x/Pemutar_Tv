@@ -23,10 +23,12 @@ jobs:
 
       - name: Install dependencies and Capacitor
         run: |
-          npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap init "Pemutar Twitch" com.twitch.pemutar --web-dir "." --yes
-          npx cap add android
+          if [ ! -f package.json ]; then
+            npm init -y
+          fi
+          npm install --save @capacitor/core @capacitor/cli @capacitor/android
+          npx cap init "Pemutar Twitch" com.twitch.pemutar --web-dir "." --yes || true
+          npx cap add android || true
           npx cap sync android
 
       - name: Build APK via Gradle
@@ -40,3 +42,10 @@ jobs:
         with:
           name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Debug Environment
+        run: |
+          node -v
+          npm -v
+          pwd
+          ls -la
