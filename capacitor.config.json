@@ -1,0 +1,6 @@
+{
+  "appId": "com.twitch.pemutar",
+  "appName": "Pemutar Twitch",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}

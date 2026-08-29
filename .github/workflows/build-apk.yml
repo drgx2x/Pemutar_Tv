@@ -25,11 +25,9 @@ jobs:
         run: |
           npm install
 
-      - name: Initialize and Sync Capacitor
+      - name: Add Android Platform and Sync
         run: |
-          npx cap init "Pemutar Twitch" com.twitch.pemutar --web-dir "." --yes || true
-          npx cap add android || true
-          npx cap sync android
+          npx cap add android
 
       - name: Build APK via Gradle
         run: |
