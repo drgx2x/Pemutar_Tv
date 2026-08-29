@@ -14,11 +14,14 @@
         .badge-twitch { background: #9146FF; }
         .badge-youtube { background: #FF0000; }
         #player-container { margin-top: 15px; display: flex; justify-content: center; }
-        #player-box { width: 100%; max-width: 600px; height: 650px; position: relative; display: flex; flex-direction: column; }
+        #player-box { width: 100%; max-width: 600px; height: 680px; position: relative; display: flex; flex-direction: column; }
         iframe { width: 100%; border: none; border-radius: 8px; }
-        .yt-player-wrap { height: 65%; width: 100%; }
-        .yt-comments-wrap { height: 35%; width: 100%; margin-top: 5px; background: #1e1e1e; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
-        .yt-comments-wrap iframe { height: 100%; width: 100%; background: #1e1e1e; }
+        .yt-player-wrap { height: 55%; width: 100%; }
+        .yt-comments-wrap { height: 40%; width: 100%; margin-top: 5px; background: #1e1e1e; border-radius: 8px; overflow-y: auto; padding: 10px; box-sizing: border-box; text-align: left; }
+        .yt-comments-wrap h4 { margin: 0 0 8px 0; font-size: 13px; color: #aaa; border-bottom: 1px solid #333; padding-bottom: 4px; }
+        .comment-item { font-size: 12px; margin-bottom: 10px; border-bottom: 1px solid #2a2a2a; padding-bottom: 8px; }
+        .comment-author { font-weight: bold; color: #3ea6ff; margin-bottom: 2px; }
+        .comment-text { color: #ddd; word-break: break-word; }
     </style>
 </head>
 <body>
@@ -57,8 +60,6 @@
             }
 
             if (isYouTube && ytId) {
-                // Dapatkan hostname aktif untuk parameter embed komentar YouTube
-                let currentHost = window.location.hostname || "localhost";
                 playerBox.innerHTML = `
                     <div class="platform-badge badge-youtube">YouTube Player & Comments</div>
                     <div class="yt-player-wrap">
@@ -67,10 +68,14 @@
                             allowfullscreen>
                         </iframe>
                     </div>
-                    <div class="yt-comments-wrap">
-                        <iframe src="https://www.youtube.com/live_chat?v=${ytId}&embed_domain=${currentHost}"></iframe>
+                    <div class="yt-comments-wrap" id="yt-comments-box">
+                        <h4>Komentar YouTube</h4>
+                        <div style="color: #881515; font-size: 12px;">Memuat komentar atau live chat... (Catatan: Video biasa memerlukan YouTube API Key untuk menampilkan komentar publik secara langsung via API).</div>
                     </div>
                 `;
+
+                // Coba muat Live Chat jika itu adalah live stream
+                loadYouTubeLiveChatOrInfo(ytId);
             } else {
                 let channelName = input;
                 if (input.includes("twitch.tv/")) {
@@ -97,6 +102,17 @@
             let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             let match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function loadYouTubeLiveChatOrInfo(videoId) {
+            let commentsBox = document.getElementById('yt-comments-box');
+            let currentHost = window.location.hostname || "localhost";
+            
+            // Pertama coba embed live_chat (berfungsi jika video tersebut adalah Live Streaming / Premiere)
+            commentsBox.innerHTML = `
+                <h4>Live Chat / Komentar YouTube</h4>
+                <iframe src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${currentHost}" style="width:100%; height:calc(100% - 25px); border:none; background:#1e1e1e;"></iframe>
+            `;
         }
 
         // Auto lock orientation to landscape on fullscreen (Mobile/Android WebView/Capacitor)
