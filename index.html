@@ -93,21 +93,6 @@
             user-select: none;
         }
 
-        .badge-list {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.85);
-            color: white;
-            padding: 6px 12px;
-            font-size: 13px;
-            border-radius: 6px;
-            z-index: 99999;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            user-select: none;
-        }
-
         /* Modal Daftar Channel/Stream */
         #modal-list {
             display: none;
@@ -181,36 +166,61 @@
         <div class="modal-content">
             <h3>Daftar Live Stream</h3>
             <div id="stream-items-container">
-                <!-- Daftar stream akan dimuat di sini -->
+                <div style="color:#aaa; text-align:center;">Memuat daftar terbaru...</div>
             </div>
             <button class="close-modal" onclick="closeModal()">Tutup</button>
         </div>
     </div>
 
-    <!-- Panggil file streams.js eksternal -->
-    <script src="streams.js"></script>
-
     <script>
+        // URL Raw GitHub untuk streams.js Anda agar bisa di-update online secara live tanpa build APK ulang
+        const STREAMS_URL = "https://raw.githubusercontent.com/drgx2x/Pemutar_Twitch/main/streams.js?t=" + new Date().getTime();
+
+        let cachedStreams = [];
+
+        // Fungsi untuk mengambil data streams terbaru secara online
+        async function fetchStreams() {
+            try {
+                const response = await fetch(STREAMS_URL);
+                const text = await response.text();
+                
+                // Karena streams.js isinya "const myStreams = [...]", kita evaluasi aman atau parse
+                // Atau kita buat file streams.js langsung diexecute/eval
+                // Cara paling aman jika file berupa "const myStreams = [...]":
+                let cleanScript = text.replace(/const\s+myStreams\s*=\s*/, 'window.tempStreams = ');
+                eval(cleanScript);
+                
+                if (window.tempStreams && Array.isArray(window.tempStreams)) {
+                    cachedStreams = window.tempStreams;
+                }
+            } catch (e) {
+                console.log("Gagal mengambil online streams, menggunakan fallback lokal:", e);
+                // Fallback jika offline
+                if (typeof myStreams !== 'undefined') {
+                    cachedStreams = myStreams;
+                }
+            }
+        }
+
+        // Panggil fetch streams saat aplikasi pertama kali dibuka
+        fetchStreams();
+
         function renderStreamList() {
             const container = document.getElementById('stream-items-container');
             container.innerHTML = '';
             
-            // Memeriksa apakah variabel myStreams dari streams.js tersedia
-            if (typeof myStreams === 'undefined' || !Array.isArray(myStreams)) {
-                container.innerHTML = '<div style="color:#ff4444; text-align:center;">File streams.js tidak ditemukan atau format salah!</div>';
+            if (!cachedStreams || cachedStreams.length === 0) {
+                container.innerHTML = '<div style="color:#ff4444; text-align:center;">Belum ada stream atau gagal memuat!</div>';
                 return;
             }
 
-            myStreams.forEach((stream, index) => {
+            cachedStreams.forEach((stream, index) => {
                 let displayName = stream.name;
 
-                // Jika name kosong, buat otomatis dari URL/Channel
                 if (!displayName || displayName.trim() === "") {
                     if (stream.url.includes('youtube.com') || stream.url.includes('youtu.be')) {
-                        // Ambil ID YouTube atau fallback jadi "YouTube Live"
                         displayName = "YouTube Live (" + (stream.url.split('v=')[1] ? stream.url.split('v=')[1].substring(0, 8) + '...' : 'Stream') + ")";
                     } else {
-                        // Kapitalisasi nama channel Twitch (contoh: "shroud" -> "Shroud")
                         displayName = stream.url.charAt(0).toUpperCase() + stream.url.slice(1) + " (Twitch)";
                     }
                 }
@@ -227,7 +237,9 @@
             });
         }
 
-        function openModal() {
+        async function openModal() {
+            // Ambil data terbaru setiap kali modal dibuka agar selalu sinkron
+            await fetchStreams();
             renderStreamList();
             document.getElementById('modal-list').style.display = 'flex';
         }
@@ -239,8 +251,6 @@
         function toggleFullscreen() {
             const playerBox = document.getElementById('player-box');
             const iframe = playerBox.querySelector('iframe');
-            
-            // Cek elemen mana yang mensupport fullscreen API (Prioritaskan iframe YouTube agar tombol fullscreen-nya berfungsi sempurna)
             const target = iframe || playerBox;
 
             if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -250,7 +260,6 @@
                     target.webkitRequestFullscreen();
                 }
                 
-                // Tambahkan class fallback jika browser tidak merespon fullscreen element dengan benar
                 playerBox.classList.add('fullscreen-landscape');
                 document.getElementById('input-section').style.display = 'none';
                 const chatBox = document.getElementById('chat-box');
