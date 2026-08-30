@@ -4,10 +4,10 @@
 const myStreams = [
     { 
         name: "", 
-        url: "https://www.youtube.com/watch?v=DOOrIxw5xOw" 
+        url: "https://www.youtube.com/watch?v=hjNOqYN6UJo" 
     },
     { 
         name: "", 
-        url: "https://www.youtube.com/watch?v=rQJoEpzKkNk" 
+        url: "https://www.youtube.com/watch?v=PDDOkUq33Sw" 
     }
 ];
