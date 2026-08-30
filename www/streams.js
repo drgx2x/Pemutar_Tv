@@ -21,5 +21,10 @@ const myStreams = [
         name: "tvOne", 
         url: "https://www.youtube.com/watch?v=rQJoEpzKkNk",
         type: "youtube"
+    },
+    { 
+        name: "Official iNews", 
+        url: "https://www.youtube.com/watch?v=WHTPYAvakTg",
+        type: "youtube"
     }
 ];
