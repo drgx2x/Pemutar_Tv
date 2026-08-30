@@ -3,7 +3,7 @@
 
 const myStreams = [
     { 
-        name: "MetroTv", 
+        name: "MetroTV", 
         url: "https://www.youtube.com/watch?v=hjNOqYN6UJo" 
     },
     { 
