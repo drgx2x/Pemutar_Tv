@@ -31,5 +31,13 @@ const myStreams = [
         name: "Sindonews", 
         url: "https://www.youtube.com/watch?v=L5tT1vvWhrg",
         type: "youtube"
-    }
+    },
+    { name: "Fox News", url: "https://m.youtube.com/watch?v=C96oohpWBGw", type: "youtube" },
+    { name: "CNN", url: "https://m.youtube.com/watch?v=GotlA1KKWoo", type: "youtube" },
+    { name: "ABC News", url: "https://m.youtube.com/watch?v=uUELoBTBuFw", type: "youtube" },
+    { name: "Dateline NBC", url: "https://m.youtube.com/watch?v=rukmQJHHJKA", type: "youtube" },
+    { name: "NBC Now", url: "https://m.youtube.com/watch?v=mtfScgprugU", type: "youtube" },
+    { name: "Bloomberg", url: "https://m.youtube.com/watch?v=QB5BNdBFujE", type: "youtube" },
+    { name: "Yahoo Finance", url: "https://m.youtube.com/watch?v=KQp-e_XQnDE", type: "youtube" },
+    { name: "Al Jazeera", url: "https://m.youtube.com/watch?v=gCNeDWCI0vo", type: "youtube" }
 ];
