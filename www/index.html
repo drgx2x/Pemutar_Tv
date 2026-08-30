@@ -276,8 +276,23 @@
         </div>
     </div>
 
-    <!-- Load streams.js directly as a script so myStreams is defined natively without fetch/CORS/parsing issues -->
-    <script src="streams.js"></script>
+    <!-- Load streams via Fetch API agar selalu update dari GitHub -->
+    <script>
+        let myStreams = [];
+        async function loadStreams() {
+            try {
+                // Ganti URL ini dengan link Raw GitHub Anda yang sebenarnya
+                const response = await fetch('https://raw.githubusercontent.com/drgx2x/Pemutar_Twitch/main/www/streams.js?t=' + new Date().getTime());
+                myStreams = await response.json();
+                console.log("Playlist berhasil dimuat!");
+            } catch (error) {
+                console.error("Gagal memuat playlist:", error);
+                myStreams = []; // Fallback jika gagal
+            }
+        }
+        // Jalankan saat aplikasi dibuka
+        loadStreams();
+    </script>
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
         const uaPresets = {
