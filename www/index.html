@@ -144,32 +144,20 @@
         </div>
     </div>
 
+    <!-- Load streams.js directly as a script so myStreams is defined natively without fetch/CORS/parsing issues -->
+    <script src="streams.js"></script>
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
-        let playlistData = [];
-
-        async function fetchPlaylist() {
-            try {
-                let response = await fetch('./streams.js');
-                let text = await response.text();
-                let cleanText = text.substring(text.indexOf('['), text.lastIndexOf(']') + 1);
-                playlistData = JSON.parse(cleanText);
-                renderPlaylist();
-            } catch (e) {
-                console.error("Gagal memuat streams.js:", e);
-                document.getElementById('playlist-container').innerHTML = '<p style="color: #ff5555; text-align: center;">Gagal memuat streams.js.</p>';
-            }
-        }
-
         function renderPlaylist() {
             let container = document.getElementById('playlist-container');
-            if (!playlistData || playlistData.length === 0) {
-                container.innerHTML = '<p style="color: #888; text-align: center;">Playlist kosong.</p>';
+            // Check if myStreams is available globally from streams.js
+            if (typeof myStreams === 'undefined' || !myStreams || myStreams.length === 0) {
+                container.innerHTML = '<p style="color: #ff5555; text-align: center;">Playlist kosong atau streams.js gagal dimuat.</p>';
                 return;
             }
 
             container.innerHTML = "";
-            playlistData.forEach(item => {
+            myStreams.forEach(item => {
                 let div = document.createElement('div');
                 div.className = 'playlist-item';
                 div.innerHTML = `
@@ -187,7 +175,7 @@
 
         function openPlaylist() {
             document.getElementById('playlist-modal').style.display = 'flex';
-            fetchPlaylist();
+            renderPlaylist();
         }
 
         function closePlaylist() {
@@ -219,7 +207,7 @@
                     videoId = input.split("embed/")[1].split("?")[0];
                 }
 
-                    if (videoId) {
+                if (videoId) {
                     let hostname = window.location.hostname || "localhost";
                     playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
                     chatBox.innerHTML = `<iframe src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${hostname}"></iframe>`;
