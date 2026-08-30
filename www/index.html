@@ -103,22 +103,20 @@
         #chat-box iframe.youtube-chat { filter: invert(1) hue-rotate(180deg) brightness(1.2); }
         .chat-placeholder { color: #777; font-size: 13px; display: flex; align-items: center; justify-content: center; height: 100%; }
 
-        /* Tambahan untuk landscape saat fullscreen */
-        @media screen and (orientation: landscape) and (max-height: 600px) {
-            body {
-                flex-direction: row;
-            }
-            #player-wrapper {
-                flex-direction: row;
-            }
-            #player-box {
-                height: 100%;
-                width: 60%;
-            }
-            #chat-box {
-                width: 40%;
-                height: 100%;
-            }
+        /* Class untuk mode fullscreen landscape */
+        body.fullscreen-landscape {
+            flex-direction: row;
+        }
+        body.fullscreen-landscape #player-wrapper {
+            flex-direction: row;
+        }
+        body.fullscreen-landscape #player-box {
+            height: 100%;
+            width: 60%;
+        }
+        body.fullscreen-landscape #chat-box {
+            width: 40%;
+            height: 100%;
         }
 
         /* Modal Playlist Styles */
@@ -423,6 +421,19 @@
             document.body.classList.remove('sleep-active');
             cancelSleepTimer();
         }
+
+        // Deteksi perubahan fullscreen untuk layout landscape
+        document.addEventListener("fullscreenchange", function() {
+            if (document.fullscreenElement) {
+                // Saat masuk fullscreen, cek orientasi
+                if (window.innerHeight < window.innerWidth) {
+                    document.body.classList.add('fullscreen-landscape');
+                }
+            } else {
+                // Saat keluar fullscreen, hapus class
+                document.body.classList.remove('fullscreen-landscape');
+            }
+        });
 
         function detectAndPlay() {
             let input = document.getElementById('streamInput').value.trim();
