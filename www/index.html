@@ -103,6 +103,23 @@
         #chat-box iframe.youtube-chat { filter: invert(1) hue-rotate(180deg) brightness(1.2); }
         .chat-placeholder { color: #777; font-size: 13px; display: flex; align-items: center; justify-content: center; height: 100%; }
 
+        /* Gaya default untuk mode potrait (bukan fullscreen) */
+        #player-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        #player-box {
+            width: 100%;
+            height: 60%; /* Video lebih besar */
+        }
+        #chat-box {
+            width: 100%;
+            height: 40%; /* Chat lebih proporsional */
+            background-color: #1a1a1a; /* Warna gelap yang lebih lembut */
+        }
+
         /* Class untuk mode fullscreen landscape */
         body.fullscreen-landscape {
             flex-direction: row;
@@ -113,12 +130,12 @@
         }
         body.fullscreen-landscape #player-box {
             height: 100%;
-            width: 70%; /* Perlebar player */
+            width: 70%;
         }
         body.fullscreen-landscape #chat-box {
-            width: 30%; /* Perlebar chat */
+            width: 30%;
             height: 100%;
-            background-color: #1a1a1a; /* Warna gelap, tidak terlalu hitam */
+            background-color: #1a1a1a;
         }
 
         /* Modal Playlist Styles */
