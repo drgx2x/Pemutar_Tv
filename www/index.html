@@ -3,353 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pemutar Twitch & YouTube</title>
+    <title>Stream Player</title>
     <style>
-        * { box-sizing: border-box; }
         body { 
             font-family: sans-serif; 
             background: #121212; 
             color: #fff; 
             margin: 0; 
             padding: 8px; 
+            box-sizing: border-box; 
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
         }
-        .container { 
+
+        /* Top Bar: List button, Input, Play button */
+        .top-bar { 
+            display: flex; 
+            gap: 6px; 
+            align-items: center; 
             margin-bottom: 8px; 
-            text-align: center;
+            flex-shrink: 0;
         }
-        input { 
-            width: 70%; 
+
+        .playlist-btn { 
+            background: #2a2a2a; 
+            color: white; 
+            border: 1px solid #444; 
             padding: 8px 12px; 
-            font-size: 14px; 
-            border-radius: 5px; 
-            border: none; 
-            outline: none; 
-            background: #242424; 
-            color: #fff; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 13px; 
+            font-weight: bold; 
+            flex-shrink: 0;
         }
-        button { 
-            padding: 8px 15px; 
-            font-size: 14px; 
+        .playlist-btn:hover { background: #3a3a3a; }
+
+        input { 
+            flex-grow: 1; 
+            padding: 8px 10px; 
+            font-size: 13px; 
+            background: #1e1e1e;
+            color: #fff;
+            border-radius: 6px; 
+            border: 1px solid #444; 
+            outline: none; 
+            box-sizing: border-box; 
+        }
+
+        button.play-btn { 
+            padding: 8px 14px; 
+            font-size: 13px; 
+            background: #9146FF; 
             color: white; 
             border: none; 
-            border-radius: 5px; 
+            border-radius: 6px; 
             cursor: pointer; 
             font-weight: bold; 
-            margin-top: 5px; 
-            background: #9146ff;
+            flex-shrink: 0;
         }
-        button:hover { background: #772ce8; }
-        
-        #main-layout {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            gap: 8px;
-            width: 100%;
-            max-width: 100%;
+        button.play-btn:hover { background: #772ce8; }
+
+        /* Player Wrapper: Player di atas, Chat di bawah */
+        #player-wrapper { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            flex-grow: 1; 
+            min-height: 0;
         }
-        
+
         #player-box { 
             width: 100%; 
-            aspect-ratio: 16/9; 
+            height: 40vh;
+            min-height: 200px;
             background: #000; 
-            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 6px; 
             overflow: hidden; 
-            position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
+            flex-shrink: 0; 
         }
 
-        #chat-box {
-            width: 100%;
-            flex: 1;
-            min-height: 75vh;
-            background: #18181b;
-            border-radius: 8px;
-            overflow: hidden;
-            display: none;
-            border: 1px solid #2f2f35;
-        }
+        iframe, #twitch-embed { width: 100%; height: 100%; border: none; }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+        #chat-box { 
+            width: 100%; 
+            flex-grow: 1; 
+            background: #1e1e1e; 
+            border-radius: 6px; 
+            overflow: hidden; 
+            border: 1px solid #333; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 120px;
         }
+        #chat-box iframe { width: 100%; height: 100%; border: none; }
+        .chat-placeholder { color: #777; font-size: 13px; display: flex; align-items: center; justify-content: center; height: 100%; }
 
-        .badge-fs {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.85);
-            color: white;
-            padding: 6px 12px;
-            font-size: 13px;
-            border-radius: 6px;
-            z-index: 99999;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            user-select: none;
-            display: none !important;
-        }
-
-        .fullscreen-landscape {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            z-index: 999999 !important;
-            background: #000 !important;
-            aspect-ratio: unset !important;
-            border-radius: 0 !important;
-        }
-
-        /* Modal Daftar Channel/Stream */
-        #modal-list {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.8);
-            z-index: 999999;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: #1e1e24;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid #333;
-        }
-        .modal-content h3 { margin-top: 0; color: #9146ff; }
-        .stream-item {
-            padding: 10px;
-            margin-bottom: 8px;
-            background: #2a2a35;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .stream-item:hover { background: #3a3a4d; }
-        .close-modal {
-            background: #ff4444;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .fullscreen-landscape {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            z-index: 999999 !important;
-            background: #000 !important;
-            aspect-ratio: unset !important;
-            border-radius: 0 !important;
-        }
+        /* Modal Playlist Styles */
+        #playlist-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: #1e1e1e; width: 90%; max-width: 400px; border-radius: 8px; padding: 15px; text-align: left; border: 1px solid #444; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 10px; }
+        .close-btn { background: none; border: none; color: #fff; font-size: 18px; cursor: pointer; }
+        .playlist-item { padding: 10px; background: #2a2a2a; margin-bottom: 8px; border-radius: 5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .playlist-item:hover { background: #3a3a3a; }
+        .playlist-title { font-size: 14px; font-weight: bold; }
+        .playlist-type { font-size: 11px; background: #9146FF; padding: 2px 6px; border-radius: 3px; }
     </style>
 </head>
 <body>
 
-    <div class="container" id="input-section" style="display: flex; gap: 8px; justify-content: center; align-items: center;">
-        <button onclick="openModal()" style="margin-top: 0; background: #333; padding: 8px 12px;">☰ List</button>
-        <input type="text" id="streamInput" placeholder="Cth: shroud atau link YouTube" style="flex: 1; max-width: 300px;">
-        <button onclick="playStream()" style="margin-top: 0;">Putar</button>
+    <div class="top-bar">
+        <button class="playlist-btn" onclick="openPlaylist()">≡ List</button>
+        <input type="text" id="streamInput" placeholder="URL / Channel">
+        <button class="play-btn" onclick="detectAndPlay()">Putar</button>
     </div>
 
-    <div id="main-layout">
+    <div id="player-wrapper">
         <div id="player-box">
-            <p style="color: #666; margin-top: 25vh; text-align: center;">Masukkan channel/link lalu klik Putar</p>
+            <span style="color: #777; font-size: 13px;">Masukkan URL atau Channel</span>
         </div>
-        <div id="chat-box"></div>
+        <div id="chat-box">
+            <div class="chat-placeholder">Kolom Live Chat / Komentar</div>
+        </div>
     </div>
 
-    <!-- Modal List -->
-    <div id="modal-list">
+    <!-- Modal Playlist -->
+    <div id="playlist-modal" onclick="closePlaylistOutside(event)">
         <div class="modal-content">
-            <h3>Daftar Live Stream</h3>
-            <div id="stream-items-container">
-                <div style="color:#aaa; text-align:center;">Memuat daftar terbaru...</div>
+            <div class="modal-header">
+                <h4 style="margin: 0;">Daftar Playlist</h4>
+                <button class="close-btn" onclick="closePlaylist()">✕</button>
             </div>
-            <button class="close-modal" onclick="closeModal()">Tutup</button>
+            <div id="playlist-container">
+                <p style="color: #888; text-align: center;">Memuat playlist...</p>
+            </div>
         </div>
     </div>
 
+    <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
-        // URL Raw GitHub untuk streams.js Anda agar bisa di-update online secara live tanpa build APK ulang
-        const STREAMS_URL = "https://raw.githubusercontent.com/drgx2x/Pemutar_Twitch/main/streams.js?t=" + new Date().getTime();
+        let playlistData = [];
 
-        let cachedStreams = [];
-
-        // Fungsi untuk mengambil data streams terbaru secara online
-        async function fetchStreams() {
+        async function fetchPlaylist() {
             try {
-                const response = await fetch(STREAMS_URL);
-                const text = await response.text();
-                
-                // Karena streams.js isinya "const myStreams = [...]", kita evaluasi aman atau parse
-                // Atau kita buat file streams.js langsung diexecute/eval
-                // Cara paling aman jika file berupa "const myStreams = [...]":
-                let cleanScript = text.replace(/const\s+myStreams\s*=\s*/, 'window.tempStreams = ');
-                eval(cleanScript);
-                
-                if (window.tempStreams && Array.isArray(window.tempStreams)) {
-                    cachedStreams = window.tempStreams;
-                }
+                let response = await fetch('./streams.js');
+                let text = await response.text();
+                let cleanText = text.substring(text.indexOf('['), text.lastIndexOf(']') + 1);
+                playlistData = JSON.parse(cleanText);
+                renderPlaylist();
             } catch (e) {
-                console.log("Gagal mengambil online streams, menggunakan fallback lokal:", e);
-                // Fallback jika offline
-                if (typeof myStreams !== 'undefined') {
-                    cachedStreams = myStreams;
-                }
+                console.error("Gagal memuat streams.js:", e);
+                document.getElementById('playlist-container').innerHTML = '<p style="color: #ff5555; text-align: center;">Gagal memuat streams.js.</p>';
             }
         }
 
-        // Panggil fetch streams saat aplikasi pertama kali dibuka
-        fetchStreams();
-
-        function renderStreamList() {
-            const container = document.getElementById('stream-items-container');
-            container.innerHTML = '';
-            
-            if (!cachedStreams || cachedStreams.length === 0) {
-                container.innerHTML = '<div style="color:#ff4444; text-align:center;">Belum ada stream atau gagal memuat!</div>';
+        function renderPlaylist() {
+            let container = document.getElementById('playlist-container');
+            if (!playlistData || playlistData.length === 0) {
+                container.innerHTML = '<p style="color: #888; text-align: center;">Playlist kosong.</p>';
                 return;
             }
 
-            cachedStreams.forEach((stream, index) => {
-                let displayName = stream.name;
-
-                if (!displayName || displayName.trim() === "") {
-                    if (stream.url.includes('youtube.com') || stream.url.includes('youtu.be')) {
-                        displayName = "YouTube Live (" + (stream.url.split('v=')[1] ? stream.url.split('v=')[1].substring(0, 8) + '...' : 'Stream') + ")";
-                    } else {
-                        displayName = stream.url.charAt(0).toUpperCase() + stream.url.slice(1) + " (Twitch)";
-                    }
-                }
-
-                const div = document.createElement('div');
-                div.className = 'stream-item';
-                div.innerHTML = `<span>${displayName}</span> <span style="font-size:12px; color:#aaa;">▶ Play</span>`;
+            container.innerHTML = "";
+            playlistData.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'playlist-item';
+                div.innerHTML = `
+                    <span class="playlist-title">${item.name}</span>
+                    <span class="playlist-type">${(item.type || 'stream').toUpperCase()}</span>
+                `;
                 div.onclick = () => {
-                    document.getElementById('streamInput').value = stream.url;
-                    closeModal();
-                    playStream();
+                    document.getElementById('streamInput').value = item.url || item.name;
+                    detectAndPlay();
+                    closePlaylist();
                 };
                 container.appendChild(div);
             });
         }
 
-        async function openModal() {
-            // Ambil data terbaru setiap kali modal dibuka agar selalu sinkron
-            await fetchStreams();
-            renderStreamList();
-            document.getElementById('modal-list').style.display = 'flex';
+        function openPlaylist() {
+            document.getElementById('playlist-modal').style.display = 'flex';
+            fetchPlaylist();
         }
 
-        function closeModal() {
-            document.getElementById('modal-list').style.display = 'none';
+        function closePlaylist() {
+            document.getElementById('playlist-modal').style.display = 'none';
         }
 
-        function toggleFullscreen() {
-            // Dinonaktifkan agar tidak memaksa orientasi landscape
+        function closePlaylistOutside(event) {
+            if (event.target.id === 'playlist-modal') {
+                closePlaylist();
+            }
         }
 
-        document.addEventListener('fullscreenchange', () => {
-            const playerBox = document.getElementById('player-box');
-            const inputSection = document.getElementById('input-section');
-            if (document.fullscreenElement) {
-                playerBox.classList.add('fullscreen-landscape');
-                if (inputSection) inputSection.style.display = 'none';
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(() => {});
-                }
-            } else {
-                playerBox.classList.remove('fullscreen-landscape');
-                if (inputSection) inputSection.style.display = 'flex';
-                if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock();
-                }
-            }
-        });
+        function detectAndPlay() {
+            let input = document.getElementById('streamInput').value.trim();
+            let playerBox = document.getElementById('player-box');
+            let chatBox = document.getElementById('chat-box');
+            if (!input) return;
 
-        // Deteksi event webkitfullscreenchange untuk dukungan browser mobile/webkit
-        document.addEventListener('webkitfullscreenchange', () => {
-            const playerBox = document.getElementById('player-box');
-            const inputSection = document.getElementById('input-section');
-            if (document.webkitFullscreenElement) {
-                playerBox.classList.add('fullscreen-landscape');
-                if (inputSection) inputSection.style.display = 'none';
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(() => {});
-                }
-            } else {
-                playerBox.classList.remove('fullscreen-landscape');
-                if (inputSection) inputSection.style.display = 'flex';
-                if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock();
-                }
-            }
-        });
+            playerBox.innerHTML = "";
+            chatBox.innerHTML = "";
 
-        function playStream() {
-            const inputVal = document.getElementById('streamInput').value.trim();
-            const playerBox = document.getElementById('player-box');
-            const chatBox = document.getElementById('chat-box');
-            const fsBtn = document.getElementById('fs-btn');
-
-            if (!inputVal) {
-                alert('Silakan masukkan nama channel Twitch atau link YouTube!');
-                return;
-            }
-
-            chatBox.style.display = 'none';
-            chatBox.innerHTML = '';
-
-            if (inputVal.includes('youtube.com') || inputVal.includes('youtu.be')) {
-                let videoId = '';
-                if (inputVal.includes('youtu.be/')) {
-                    videoId = inputVal.split('youtu.be/')[1].split('?')[0];
-                } else if (inputVal.includes('watch?v=')) {
-                    videoId = inputVal.split('watch?v=')[1].split('&')[0];
-                } else if (inputVal.includes('embed/')) {
-                    videoId = inputVal.split('embed/')[1].split('?')[0];
+            if (input.includes("youtube.com") || input.includes("youtu.be")) {
+                let videoId = "";
+                if (input.includes("youtu.be/")) {
+                    videoId = input.split("youtu.be/")[1].split("?")[0];
+                } else if (input.includes("watch?v=")) {
+                    videoId = input.split("watch?v=")[1].split("&")[0];
+                } else if (input.includes("embed/")) {
+                    videoId = input.split("embed/")[1].split("?")[0];
                 }
 
-                if (videoId) {
-                    playerBox.innerHTML = `
-                        <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true"></iframe>
-                    `;
+                    if (videoId) {
+                    let hostname = window.location.hostname || "localhost";
+                    playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    chatBox.innerHTML = `<iframe src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${hostname}"></iframe>`;
                 } else {
-                    alert('Format link YouTube tidak valid!');
+                    playerBox.innerHTML = `<span style="color: red;">URL YouTube tidak valid</span>`;
+                    chatBox.innerHTML = `<div class="chat-placeholder">Chat tidak tersedia</div>`;
                 }
             } else {
-                const channelName = inputVal;
-                const parentDomain = window.location.hostname || "localhost";
-                const extraParents = `&parent=localhost&parent=127.0.0.1&parent=github.io&parent=capacitor.localhost&parent=ionic.localhost`;
+                let channelName = input;
+                if (input.includes("twitch.tv/")) {
+                    let parts = input.split("twitch.tv/");
+                    channelName = parts[1].split("/")[0];
+                }
 
-                playerBox.innerHTML = `
-                    <iframe src="https://player.twitch.tv/?channel=${channelName}&parent=${parentDomain}${extraParents}" allowfullscreen="true"></iframe>
-                `;
+                let twitchEmbedDiv = document.createElement('div');
+                twitchEmbedDiv.id = 'twitch-embed';
+                playerBox.appendChild(twitchEmbedDiv);
 
-                chatBox.style.display = 'block';
-                chatBox.innerHTML = `
-                    <iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${parentDomain}${extraParents}" height="100%" width="100%"></iframe>
-                `;
+                new Twitch.Embed("twitch-embed", {
+                    width: "100%",
+                    height: "100%",
+                    channel: channelName,
+                    parent: ["localhost", "127.0.0.1", "capacitor.localhost", window.location.hostname]
+                });
+
+                let hostname = window.location.hostname || "localhost";
+                chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${hostname}&parent=localhost&parent=127.0.0.1"></iframe>`;
             }
-
-            // Set fullscreen landscape secara otomatis setelah video/stream diputar
-
         }
     </script>
 </body>
