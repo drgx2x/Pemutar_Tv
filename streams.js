@@ -11,5 +11,15 @@ const myStreams = [
         name: "CNN Indonesia", 
         url: "https://www.youtube.com/watch?v=PDDOkUq33Sw",
         type: "youtube"
+    },
+    { 
+        name: "KOMPAS TV", 
+        url: "https://www.youtube.com/watch?v=DOOrIxw5xOw",
+        type: "youtube"
+    },
+    { 
+        name: "tvOne", 
+        url: "https://www.youtube.com/watch?v=rQJoEpzKkNk",
+        type: "youtube"
     }
 ];
