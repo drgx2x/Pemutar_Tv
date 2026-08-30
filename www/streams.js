@@ -26,5 +26,10 @@ const myStreams = [
         name: "Official iNews", 
         url: "https://www.youtube.com/watch?v=WHTPYAvakTg",
         type: "youtube"
+    },
+    { 
+        name: "Sindonews", 
+        url: "https://www.youtube.com/live/L5tT1vvWhrg",
+        type: "youtube"
     }
 ];
