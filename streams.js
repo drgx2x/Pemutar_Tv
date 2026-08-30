@@ -4,10 +4,12 @@
 const myStreams = [
     { 
         name: "MetroTV", 
-        url: "https://www.youtube.com/watch?v=hjNOqYN6UJo" 
+        url: "https://www.youtube.com/watch?v=hjNOqYN6UJo",
+        type: "youtube"
     },
     { 
         name: "CNN Indonesia", 
-        url: "https://www.youtube.com/watch?v=PDDOkUq33Sw" 
+        url: "https://www.youtube.com/watch?v=PDDOkUq33Sw",
+        type: "youtube"
     }
 ];
