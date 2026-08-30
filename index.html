@@ -148,6 +148,21 @@
     <script src="streams.js"></script>
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
+        // Otomatis ubah orientasi ke landscape saat masuk mode fullscreen di browser HP
+        document.addEventListener("fullscreenchange", function() {
+            if (document.fullscreenElement) {
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock("landscape").catch(function(err) {
+                        console.log("Screen orientation lock not supported or denied:", err);
+                    });
+                }
+            } else {
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+            }
+        });
+
         function renderPlaylist() {
             let container = document.getElementById('playlist-container');
             // Check if myStreams is available globally from streams.js
