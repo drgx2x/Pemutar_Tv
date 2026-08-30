@@ -29,7 +29,7 @@ const myStreams = [
     },
     { 
         name: "Sindonews", 
-        url: "https://www.youtube.com/live/L5tT1vvWhrg",
+        url: "https://www.youtube.com/watch?v=L5tT1vvWhrg",
         type: "youtube"
     }
 ];
