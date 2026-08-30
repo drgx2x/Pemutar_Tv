@@ -99,7 +99,8 @@
             flex-direction: column; 
             min-height: 120px;
         }
-        #chat-box iframe { width: 100%; height: 100%; border: none; filter: brightness(0.8); }
+        #chat-box iframe { width: 100%; height: 100%; border: none; }
+        #chat-box iframe.youtube-chat { filter: invert(1) hue-rotate(180deg) brightness(1.2); }
         .chat-placeholder { color: #777; font-size: 13px; display: flex; align-items: center; justify-content: center; height: 100%; }
 
         /* Modal Playlist Styles */
@@ -413,6 +414,7 @@
 
             playerBox.innerHTML = "";
             chatBox.innerHTML = "";
+            chatBox.style.display = "flex";
 
             if (input.includes("youtube.com") || input.includes("youtu.be")) {
                 let videoId = "";
@@ -427,7 +429,7 @@
                 if (videoId) {
                     let hostname = window.location.hostname || "localhost";
                     playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-                    chatBox.innerHTML = `<iframe src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${hostname}"></iframe>`;
+                    chatBox.innerHTML = `<iframe class="youtube-chat" src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${hostname}"></iframe>`;
                 } else {
                     playerBox.innerHTML = `<span style="color: red;">URL YouTube tidak valid</span>`;
                     chatBox.innerHTML = `<div class="chat-placeholder">Chat tidak tersedia</div>`;
@@ -447,11 +449,12 @@
                     width: "100%",
                     height: "100%",
                     channel: channelName,
+                    layout: "video-with-chat",
                     parent: ["localhost", "127.0.0.1", "capacitor.localhost", window.location.hostname]
                 });
 
-                let hostname = window.location.hostname || "localhost";
-                chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${hostname}&parent=localhost&parent=127.0.0.1"></iframe>`;
+                // Chat box will be handled by the embedded layout, so we clear or hide the external iframe
+                chatBox.style.display = "none";
             }
         }
     </script>
