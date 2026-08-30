@@ -91,6 +91,7 @@
             cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.3);
             user-select: none;
+            display: none !important;
         }
 
         .fullscreen-landscape {
@@ -167,7 +168,6 @@
 
     <div id="main-layout">
         <div id="player-box">
-            <div class="badge-fs" id="fs-btn" style="display:none;" onclick="toggleFullscreen()">⛶ Fullscreen</div>
             <p style="color: #666; margin-top: 25vh; text-align: center;">Masukkan channel/link lalu klik Putar</p>
         </div>
         <div id="chat-box"></div>
@@ -335,8 +335,6 @@
                     playerBox.innerHTML = `
                         <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true"></iframe>
                     `;
-                    playerBox.appendChild(fsBtn);
-                    fsBtn.style.display = 'block';
                 } else {
                     alert('Format link YouTube tidak valid!');
                 }
@@ -348,8 +346,6 @@
                 playerBox.innerHTML = `
                     <iframe src="https://player.twitch.tv/?channel=${channelName}&parent=${parentDomain}${extraParents}" allowfullscreen="true"></iframe>
                 `;
-                playerBox.appendChild(fsBtn);
-                fsBtn.style.display = 'block';
 
                 chatBox.style.display = 'block';
                 chatBox.innerHTML = `
