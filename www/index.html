@@ -162,14 +162,14 @@
 </head>
 <body>
 
-    <div class="container" id="input-section">
-        <input type="text" id="streamInput" placeholder="Cth: shroud atau link YouTube"><br>
-        <button onclick="playStream()">Putar</button>
+    <div class="container" id="input-section" style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+        <button onclick="openModal()" style="margin-top: 0; background: #333; padding: 8px 12px;">☰ List</button>
+        <input type="text" id="streamInput" placeholder="Cth: shroud atau link YouTube" style="flex: 1; max-width: 300px;">
+        <button onclick="playStream()" style="margin-top: 0;">Putar</button>
     </div>
 
     <div id="main-layout">
         <div id="player-box">
-            <div class="badge-list" id="list-btn" style="display:none;" onclick="openModal()">☰ List</div>
             <div class="badge-fs" id="fs-btn" style="display:none;" onclick="toggleFullscreen()">⛶ Fullscreen</div>
             <p style="color: #666; margin-top: 25vh; text-align: center;">Masukkan channel/link lalu klik Putar</p>
         </div>
@@ -222,17 +222,22 @@
 
         function toggleFullscreen() {
             const playerBox = document.getElementById('player-box');
-            const inputSection = document.getElementById('input-section');
-            const chatBox = document.getElementById('chat-box');
+            const iframe = playerBox.querySelector('iframe');
+            
+            // Cek elemen mana yang mensupport fullscreen API (Prioritaskan iframe YouTube agar tombol fullscreen-nya berfungsi sempurna)
+            const target = iframe || playerBox;
 
-            if (!document.fullscreenElement) {
-                if (playerBox.requestFullscreen) {
-                    playerBox.requestFullscreen();
-                } else if (playerBox.webkitRequestFullscreen) {
-                    playerBox.webkitRequestFullscreen();
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (target.requestFullscreen) {
+                    target.requestFullscreen();
+                } else if (target.webkitRequestFullscreen) {
+                    target.webkitRequestFullscreen();
                 }
+                
+                // Tambahkan class fallback jika browser tidak merespon fullscreen element dengan benar
                 playerBox.classList.add('fullscreen-landscape');
-                inputSection.style.display = 'none';
+                document.getElementById('input-section').style.display = 'none';
+                const chatBox = document.getElementById('chat-box');
                 if(chatBox.style.display === 'block') chatBox.style.display = 'none';
 
                 if (screen.orientation && screen.orientation.lock) {
@@ -245,14 +250,14 @@
                     document.webkitExitFullscreen();
                 }
                 playerBox.classList.remove('fullscreen-landscape');
-                inputSection.style.display = 'block';
+                document.getElementById('input-section').style.display = 'flex';
             }
         }
 
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement) {
                 document.getElementById('player-box').classList.remove('fullscreen-landscape');
-                document.getElementById('input-section').style.display = 'block';
+                document.getElementById('input-section').style.display = 'flex';
                 if (screen.orientation && screen.orientation.unlock) {
                     screen.orientation.unlock();
                 }
@@ -264,7 +269,6 @@
             const playerBox = document.getElementById('player-box');
             const chatBox = document.getElementById('chat-box');
             const fsBtn = document.getElementById('fs-btn');
-            const listBtn = document.getElementById('list-btn');
 
             if (!inputVal) {
                 alert('Silakan masukkan nama channel Twitch atau link YouTube!');
@@ -286,11 +290,9 @@
 
                 if (videoId) {
                     playerBox.innerHTML = `
-                        <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true"></iframe>
                     `;
-                    playerBox.appendChild(listBtn);
                     playerBox.appendChild(fsBtn);
-                    listBtn.style.display = 'block';
                     fsBtn.style.display = 'block';
                 } else {
                     alert('Format link YouTube tidak valid!');
@@ -300,11 +302,9 @@
                 const parentDomain = window.location.hostname || "localhost";
 
                 playerBox.innerHTML = `
-                    <iframe src="https://player.twitch.tv/?channel=${channelName}&parent=${parentDomain}&parent=localhost&parent=127.0.0.1&parent=github.io" allowfullscreen></iframe>
+                    <iframe src="https://player.twitch.tv/?channel=${channelName}&parent=${parentDomain}&parent=localhost&parent=127.0.0.1&parent=github.io" allowfullscreen="true"></iframe>
                 `;
-                playerBox.appendChild(listBtn);
                 playerBox.appendChild(fsBtn);
-                listBtn.style.display = 'block';
                 fsBtn.style.display = 'block';
 
                 chatBox.style.display = 'block';

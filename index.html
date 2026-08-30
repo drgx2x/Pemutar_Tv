@@ -3,167 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Player (Twitch & YouTube)</title>
+    <title>Pemutar Twitch & YouTube</title>
     <style>
-        body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; padding: 10px; margin: 0; box-sizing: border-box; }
-        .container { margin-top: 5px; margin-bottom: 10px; display: block !important; visibility: visible !important; opacity: 1 !important; }
-        input { width: 70%; padding: 8px 12px; font-size: 14px; border-radius: 5px; border: none; outline: none; box-sizing: border-box; display: inline-block !important; background: #242424 !important; color: #fff !important; }
-        button { padding: 8px 15px; font-size: 14px; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; display: inline-block !important; }
-        .btn-twitch { background: #9146FF; }
-        .platform-badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 5px; }
-        .badge-twitch { background: #9146FF; }
-        .badge-youtube { background: #FF0000; }
-        #player-container { display: flex; justify-content: center; width: 100%; }
-        #player-box { width: 100%; max-width: 900px; height: 90vh; position: relative; display: flex; flex-direction: column; }
-        iframe { width: 100%; border: none; border-radius: 8px; }
-        .yt-player-wrap { height: 38%; width: 100%; min-height: 200px; }
-        .yt-comments-wrap { height: 60%; width: 100%; margin-top: 5px; background: #0f0f0f; border: 1px solid #272727; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; text-align: left; }
-        .yt-comments-wrap h4 { margin: 0; padding: 8px 12px; font-size: 12px; color: #aaa; background: #181818; border-bottom: 1px solid #272727; }
-        
-        /* Adblock Overlay Indicator for Twitch */
-        .adblock-notice {
-            position: absolute;
-            top: 35px;
-            right: 15px;
-            background: rgba(145, 70, 255, 0.85);
-            color: white;
-            padding: 4px 8px;
-            font-size: 11px;
-            border-radius: 4px;
-            z-index: 99;
-            pointer-events: none;
+        * { box-sizing: border-box; }
+        body { 
+            font-family: sans-serif; 
+            background: #121212; 
+            color: #fff; 
+            margin: 0; 
+            padding: 8px; 
             display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container { 
+            margin-bottom: 8px; 
+            text-align: center;
+        }
+        input { 
+            width: 70%; 
+            padding: 8px 12px; 
+            font-size: 14px; 
+            border-radius: 5px; 
+            border: none; 
+            outline: none; 
+            background: #242424; 
+            color: #fff; 
+        }
+        button { 
+            padding: 8px 15px; 
+            font-size: 14px; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin-top: 5px; 
+            background: #9146ff;
+        }
+        button:hover { background: #772ce8; }
+        
+        #main-layout {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            gap: 8px;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        #player-box { 
+            width: 100%; 
+            aspect-ratio: 16/9; 
+            background: #000; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
+        }
+
+        #chat-box {
+            width: 100%;
+            height: 220px;
+            background: #18181b;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            border: 1px solid #2f2f35;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .badge-fs {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 6px;
+            z-index: 99999;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            user-select: none;
+        }
+
+        .badge-list {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 6px;
+            z-index: 99999;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            user-select: none;
+        }
+
+        /* Modal Daftar Channel/Stream */
+        #modal-list {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.8);
+            z-index: 999999;
+            justify-content: center;
             align-items: center;
-            gap: 4px;
+        }
+        .modal-content {
+            background: #1e1e24;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+        .modal-content h3 { margin-top: 0; color: #9146ff; }
+        .stream-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #2a2a35;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stream-item:hover { background: #3a3a4d; }
+        .close-modal {
+            background: #ff4444;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .fullscreen-landscape {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 999999 !important;
+            background: #000 !important;
+            aspect-ratio: unset !important;
+            border-radius: 0 !important;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <input type="text" id="streamInput" placeholder="Cth: shroud atau https://youtu.be/..."><br>
-        <button class="btn-twitch" onclick="playStream()">Putar Otomatis</button>
+    <div class="container" id="input-section" style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+        <button onclick="openModal()" style="margin-top: 0; background: #333; padding: 8px 12px;">☰ List</button>
+        <input type="text" id="streamInput" placeholder="Cth: shroud atau link YouTube" style="flex: 1; max-width: 300px;">
+        <button onclick="playStream()" style="margin-top: 0;">Putar</button>
     </div>
 
-    <div id="player-container">
+    <div id="main-layout">
         <div id="player-box">
-            <p style="color: #666; margin-top: 100px;">Masukkan link atau channel di atas untuk mulai menonton</p>
+            <div class="badge-fs" id="fs-btn" style="display:none;" onclick="toggleFullscreen()">⛶ Fullscreen</div>
+            <p style="color: #666; margin-top: 25vh; text-align: center;">Masukkan channel/link lalu klik Putar</p>
+        </div>
+        <div id="chat-box"></div>
+    </div>
+
+    <!-- Modal List -->
+    <div id="modal-list">
+        <div class="modal-content">
+            <h3>Daftar Live Stream</h3>
+            <div id="stream-items-container">
+                <!-- Daftar stream akan dimuat di sini -->
+            </div>
+            <button class="close-modal" onclick="closeModal()">Tutup</button>
         </div>
     </div>
 
-    <!-- Twitch Embed SDK -->
-    <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
-        function playStream() {
-            let input = document.getElementById('streamInput').value.trim();
-            if (!input) return;
+        // Daftar URL / Channel favorit Anda (Bisa ditambah atau diubah kapan saja)
+        const myStreams = [
+            { name: "Shroud (Twitch)", url: "shroud" },
+            { name: "Lofi Girl Live (YouTube)", url: "https://www.youtube.com/watch?v=jfKfPfyJRdk" },
+            { name: "NASA Live (YouTube)", url: "https://www.youtube.com/watch?v=21X5lGlDOfg" }
+        ];
 
-            let playerBox = document.getElementById('player-box');
-            playerBox.innerHTML = '';
+        function renderStreamList() {
+            const container = document.getElementById('stream-items-container');
+            container.innerHTML = '';
+            myStreams.forEach((stream, index) => {
+                const div = document.createElement('div');
+                div.className = 'stream-item';
+                div.innerHTML = `<span>${stream.name}</span> <span style="font-size:12px; color:#aaa;">▶ Play</span>`;
+                div.onclick = () => {
+                    document.getElementById('streamInput').value = stream.url;
+                    closeModal();
+                    playStream();
+                };
+                container.appendChild(div);
+            });
+        }
 
-            let isYouTube = false;
-            let ytId = '';
+        function openModal() {
+            renderStreamList();
+            document.getElementById('modal-list').style.display = 'flex';
+        }
 
-            if (input.includes('youtube.com') || input.includes('youtu.be')) {
-                isYouTube = true;
-                ytId = extractYouTubeId(input);
-            } else {
-                isYouTube = false;
-            }
+        function closeModal() {
+            document.getElementById('modal-list').style.display = 'none';
+        }
 
-            if (isYouTube && ytId) {
-                playerBox.innerHTML = `
-                    <div class="platform-badge badge-youtube">YouTube Player & Comments</div>
-                    <div class="yt-player-wrap">
-                        <iframe id="yt-iframe" src="https://www.youtube.com/embed/${ytId}?autoplay=1&enablejsapi=1" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            allowfullscreen>
-                        </iframe>
-                    </div>
-                    <div class="yt-comments-wrap" id="yt-comments-box">
-                        <h4>Live Chat YouTube</h4>
-                        <div style="padding: 10px; color: #888; font-size: 12px;">Memuat live chat...</div>
-                    </div>
-                `;
+        function toggleFullscreen() {
+            const playerBox = document.getElementById('player-box');
+            const iframe = playerBox.querySelector('iframe');
+            
+            // Cek elemen mana yang mensupport fullscreen API (Prioritaskan iframe YouTube agar tombol fullscreen-nya berfungsi sempurna)
+            const target = iframe || playerBox;
 
-                loadYouTubeLiveChat(ytId);
-            } else {
-                let channelName = input;
-                if (input.includes("twitch.tv/")) {
-                    let parts = input.split("twitch.tv/");
-                    channelName = parts[1].split("/")[0].split("?")[0];
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (target.requestFullscreen) {
+                    target.requestFullscreen();
+                } else if (target.webkitRequestFullscreen) {
+                    target.webkitRequestFullscreen();
                 }
                 
-                playerBox.innerHTML = `
-                    <div class="platform-badge badge-twitch">Twitch Player</div>
-                    <div class="adblock-notice">🛡️ Twitch Adblocker Active</div>
-                    <div id="twitch-embed" style="width:100%; height:calc(100% - 25px);"></div>
-                `;
+                // Tambahkan class fallback jika browser tidak merespon fullscreen element dengan benar
+                playerBox.classList.add('fullscreen-landscape');
+                document.getElementById('input-section').style.display = 'none';
+                const chatBox = document.getElementById('chat-box');
+                if(chatBox.style.display === 'block') chatBox.style.display = 'none';
 
-                let embed = new Twitch.Embed("twitch-embed", {
-                    width: "100%",
-                    height: "100%",
-                    channel: channelName,
-                    layout: "video-with-chat",
-                    parent: ["localhost", "127.0.0.1", "capacitor.localhost", "drgx2x.github.io"]
-                });
-
-                // Anti-ad / mute-bypass hook for Twitch embedded player instance
-                embed.addEventListener(Twitch.Embed.VIDEO_READY, () => {
-                    let player = embed.getPlayer();
-                    if (player) {
-                        // Monitor player events to mitigate commercial/ad interruptions
-                        if (typeof player.addEventListener === 'function') {
-                            player.addEventListener(Twitch.Player.VIDEO_AD_START, () => {
-                                // Mute or handle ad start gracefully if supported
-                                try {
-                                    player.setMuted(true);
-                                } catch(e) {}
-                            });
-                            player.addEventListener(Twitch.Player.VIDEO_AD_END, () => {
-                                try {
-                                    player.setMuted(false);
-                                } catch(e) {}
-                            });
-                        }
-                    }
-                });
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(() => {});
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+                playerBox.classList.remove('fullscreen-landscape');
+                document.getElementById('input-section').style.display = 'flex';
             }
         }
 
-        function extractYouTubeId(url) {
-            let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            let match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
-        }
-
-        function loadYouTubeLiveChat(videoId) {
-            let commentsBox = document.getElementById('yt-comments-box');
-            let currentHost = window.location.hostname || "localhost";
-            
-            commentsBox.innerHTML = `
-                <h4>Live Chat YouTube (Dark Theme)</h4>
-                <iframe src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${currentHost}&dark_theme=1" style="width:100%; height:100%; border:none; background:#0f0f0f;"></iframe>
-            `;
-        }
-
-        // Auto lock orientation to landscape on fullscreen
-        if (screen.orientation && screen.orientation.lock) {
-            document.addEventListener('fullscreenchange', () => {
-                if (document.fullscreenElement) {
-                    screen.orientation.lock('landscape').catch(() => {});
-                } else {
-                    screen.orientation.unlock().catch(() => {});
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                document.getElementById('player-box').classList.remove('fullscreen-landscape');
+                document.getElementById('input-section').style.display = 'flex';
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
                 }
-            });
-            
-            document.addEventListener('webkitfullscreenchange', () => {
-                if (document.webkitFullscreenElement) {
-                    screen.orientation.lock('landscape').catch(() => {});
-                } else {
-                    screen.orientation.unlock().catch(() => {});
+            }
+        });
+
+        function playStream() {
+            const inputVal = document.getElementById('streamInput').value.trim();
+            const playerBox = document.getElementById('player-box');
+            const chatBox = document.getElementById('chat-box');
+            const fsBtn = document.getElementById('fs-btn');
+
+            if (!inputVal) {
+                alert('Silakan masukkan nama channel Twitch atau link YouTube!');
+                return;
+            }
+
+            chatBox.style.display = 'none';
+            chatBox.innerHTML = '';
+
+            if (inputVal.includes('youtube.com') || inputVal.includes('youtu.be')) {
+                let videoId = '';
+                if (inputVal.includes('youtu.be/')) {
+                    videoId = inputVal.split('youtu.be/')[1].split('?')[0];
+                } else if (inputVal.includes('watch?v=')) {
+                    videoId = inputVal.split('watch?v=')[1].split('&')[0];
+                } else if (inputVal.includes('embed/')) {
+                    videoId = inputVal.split('embed/')[1].split('?')[0];
                 }
-            });
+
+                if (videoId) {
+                    playerBox.innerHTML = `
+                        <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true"></iframe>
+                    `;
+                    playerBox.appendChild(fsBtn);
+                    fsBtn.style.display = 'block';
+                } else {
+                    alert('Format link YouTube tidak valid!');
+                }
+            } else {
+                const channelName = inputVal;
+                const parentDomain = window.location.hostname || "localhost";
+
+                playerBox.innerHTML = `
+                    <iframe src="https://player.twitch.tv/?channel=${channelName}&parent=${parentDomain}&parent=localhost&parent=127.0.0.1&parent=github.io" allowfullscreen="true"></iframe>
+                `;
+                playerBox.appendChild(fsBtn);
+                fsBtn.style.display = 'block';
+
+                chatBox.style.display = 'block';
+                chatBox.innerHTML = `
+                    <iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${parentDomain}&parent=localhost&parent=127.0.0.1&parent=github.io" height="100%" width="100%"></iframe>
+                `;
+            }
         }
     </script>
 </body>
