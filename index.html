@@ -93,6 +93,18 @@
             user-select: none;
         }
 
+        .fullscreen-landscape {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 999999 !important;
+            background: #000 !important;
+            aspect-ratio: unset !important;
+            border-radius: 0 !important;
+        }
+
         /* Modal Daftar Channel/Stream */
         #modal-list {
             display: none;
@@ -250,32 +262,38 @@
 
         function toggleFullscreen() {
             const playerBox = document.getElementById('player-box');
-            const iframe = playerBox.querySelector('iframe');
-            const target = iframe || playerBox;
+            
+            playerBox.classList.toggle('fullscreen-landscape');
+            const isFullscreen = playerBox.classList.contains('fullscreen-landscape');
+            
+            const inputSection = document.getElementById('input-section');
+            if (inputSection) inputSection.style.display = isFullscreen ? 'none' : 'flex';
+            
+            const chatBox = document.getElementById('chat-box');
+            if (chatBox && chatBox.style.display === 'block') {
+                chatBox.style.display = isFullscreen ? 'none' : 'block';
+            }
 
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                if (target.requestFullscreen) {
-                    target.requestFullscreen();
-                } else if (target.webkitRequestFullscreen) {
-                    target.webkitRequestFullscreen();
+            if (isFullscreen) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
                 }
-                
-                playerBox.classList.add('fullscreen-landscape');
-                document.getElementById('input-section').style.display = 'none';
-                const chatBox = document.getElementById('chat-box');
-                if(chatBox.style.display === 'block') chatBox.style.display = 'none';
 
                 if (screen.orientation && screen.orientation.lock) {
                     screen.orientation.lock('landscape').catch(() => {});
                 }
             } else {
                 if (document.exitFullscreen) {
-                    document.exitFullscreen();
+                    document.exitFullscreen().catch(() => {});
                 } else if (document.webkitExitFullscreen) {
                     document.webkitExitFullscreen();
                 }
-                playerBox.classList.remove('fullscreen-landscape');
-                document.getElementById('input-section').style.display = 'flex';
+
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock().catch(() => {});
+                }
             }
         }
 
@@ -325,16 +343,17 @@
             } else {
                 const channelName = inputVal;
                 const parentDomain = window.location.hostname || "localhost";
+                const extraParents = `&parent=localhost&parent=127.0.0.1&parent=github.io&parent=capacitor.localhost&parent=ionic.localhost`;
 
                 playerBox.innerHTML = `
-                    <iframe src="https://player.twitch.tv/?channel=${channelName}&parent=${parentDomain}&parent=localhost&parent=127.0.0.1&parent=github.io" allowfullscreen="true"></iframe>
+                    <iframe src="https://player.twitch.tv/?channel=${channelName}&parent=${parentDomain}${extraParents}" allowfullscreen="true"></iframe>
                 `;
                 playerBox.appendChild(fsBtn);
                 fsBtn.style.display = 'block';
 
                 chatBox.style.display = 'block';
                 chatBox.innerHTML = `
-                    <iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${parentDomain}&parent=localhost&parent=127.0.0.1&parent=github.io" height="100%" width="100%"></iframe>
+                    <iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${parentDomain}${extraParents}" height="100%" width="100%"></iframe>
                 `;
             }
         }
