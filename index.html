@@ -251,11 +251,12 @@
                     width: "100%",
                     height: "100%",
                     channel: channelName,
+                    layout: "video", // Hanya menampilkan video player saja tanpa chat ganda di samping/bawah player
                     parent: ["localhost", "127.0.0.1", "capacitor.localhost", window.location.hostname]
                 });
 
-                // Twitch embed menggunakan player bawaan yang sudah memiliki fitur chat/kolom komentar di dalamnya jika tidak dipisah secara khusus
-                chatBox.innerHTML = `<div class="chat-placeholder">Menggunakan chat bawaan Twitch player</div>`;
+                let hostname = window.location.hostname || "localhost";
+                chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${hostname}&parent=localhost&parent=127.0.0.1&darkpopout"></iframe>`;
             }
         }
     </script>
