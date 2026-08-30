@@ -3,11 +3,11 @@
 
 const myStreams = [
     { 
-        name: "YouTube Stream 1", 
+        name: "MetroTv", 
         url: "https://www.youtube.com/watch?v=hjNOqYN6UJo" 
     },
     { 
-        name: "YouTube Stream 2", 
+        name: "CNN Indonesia", 
         url: "https://www.youtube.com/watch?v=PDDOkUq33Sw" 
     }
 ];
