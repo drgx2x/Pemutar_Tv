@@ -65,7 +65,7 @@
         #chat-box {
             width: 100%;
             flex: 1;
-            min-height: 550px;
+            min-height: 75vh;
             background: #18181b;
             border-radius: 8px;
             overflow: hidden;
@@ -266,9 +266,36 @@
         }
 
         document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                document.getElementById('player-box').classList.remove('fullscreen-landscape');
-                document.getElementById('input-section').style.display = 'flex';
+            const playerBox = document.getElementById('player-box');
+            const inputSection = document.getElementById('input-section');
+            if (document.fullscreenElement) {
+                playerBox.classList.add('fullscreen-landscape');
+                if (inputSection) inputSection.style.display = 'none';
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(() => {});
+                }
+            } else {
+                playerBox.classList.remove('fullscreen-landscape');
+                if (inputSection) inputSection.style.display = 'flex';
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+            }
+        });
+
+        // Deteksi event webkitfullscreenchange untuk dukungan browser mobile/webkit
+        document.addEventListener('webkitfullscreenchange', () => {
+            const playerBox = document.getElementById('player-box');
+            const inputSection = document.getElementById('input-section');
+            if (document.webkitFullscreenElement) {
+                playerBox.classList.add('fullscreen-landscape');
+                if (inputSection) inputSection.style.display = 'none';
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(() => {});
+                }
+            } else {
+                playerBox.classList.remove('fullscreen-landscape');
+                if (inputSection) inputSection.style.display = 'flex';
                 if (screen.orientation && screen.orientation.unlock) {
                     screen.orientation.unlock();
                 }
