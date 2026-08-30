@@ -112,6 +112,33 @@
         .playlist-item:hover { background: #3a3a3a; }
         .playlist-title { font-size: 14px; font-weight: bold; }
         .playlist-type { font-size: 11px; background: #9146FF; padding: 2px 6px; border-radius: 3px; }
+
+        /* Sleep Mode Styles */
+        #sleep-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+        }
+        body.sleep-active #sleep-overlay {
+            display: flex;
+        }
+        .sleep-timer-btn {
+            background: #2a2a2a;
+            color: white;
+            border: 1px solid #444;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 4px;
+            font-size: 13px;
+        }
+        .sleep-timer-btn:hover { background: #3a3a3a; }
     </style>
 </head>
 <body>
@@ -120,6 +147,10 @@
         <button class="playlist-btn" onclick="openPlaylist()">≡ List</button>
         <input type="text" id="streamInput" placeholder="URL / Channel">
         <button class="play-btn" onclick="detectAndPlay()">Putar</button>
+        <button class="playlist-btn" id="pipBtn" onclick="togglePiP()" title="Picture-in-Picture">📺 PiP</button>
+        <button class="playlist-btn" id="uaBtn" onclick="openUAModal()" title="User Agent">🌐 UA</button>
+        <button class="playlist-btn" id="sleepBtn" onclick="openSleepModal()" title="Sleep Timer">🌙 Sleep</button>
+        <button class="playlist-btn" id="adblockBtn" onclick="toggleAdBlock()" title="AdBlock Status" style="background: #28a745;">🛡️ AdBlock</button>
     </div>
 
     <div id="player-wrapper">
@@ -140,6 +171,66 @@
             </div>
             <div id="playlist-container">
                 <p style="color: #888; text-align: center;">Memuat playlist...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sleep Mode Overlay / Screen off simulator -->
+    <div id="sleep-overlay" onclick="cancelSleepMode()">
+        <div style="font-size: 32px; margin-bottom: 10px;">🌙</div>
+        <div style="font-size: 14px; font-family: monospace;">Sleep Timer Aktif</div>
+        <div style="font-size: 11px; color: #444; margin-top: 5px;">Sentuh layar untuk batal & bangunkan</div>
+    </div>
+
+    <!-- Modal Sleep Timer -->
+    <div id="sleep-modal" onclick="closeSleepModalOutside(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-header">
+                <h4 style="margin: 0;">Pengatur Waktu Tidur (Sleep Timer)</h4>
+                <button class="close-btn" onclick="closeSleepModal()">✕</button>
+            </div>
+            <div id="sleep-status-info" style="margin: 15px 0; font-size: 13px; color: #aaa;">
+                Status: <span id="timerStatusText" style="color: #9146FF; font-weight: bold;">Nonaktif</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 12px;">
+                <button class="sleep-timer-btn" onclick="setSleepTimer(10)">10 Menit</button>
+                <button class="sleep-timer-btn" onclick="setSleepTimer(15)">15 Menit</button>
+                <button class="sleep-timer-btn" onclick="setSleepTimer(30)">30 Menit</button>
+                <button class="sleep-timer-btn" onclick="setSleepTimer(45)">45 Menit</button>
+                <button class="sleep-timer-btn" onclick="setSleepTimer(60)">60 Menit</button>
+            </div>
+            
+            <div style="display: flex; gap: 6px; margin-bottom: 15px; justify-content: center; align-items: center;">
+                <input type="number" id="manualMinutes" placeholder="Menit manual" min="1" max="720" style="background: #1a1a1a; border: 1px solid #444; color: white; padding: 6px 10px; border-radius: 5px; width: 120px; font-size: 13px;">
+                <button class="sleep-timer-btn" style="margin: 0;" onclick="setManualSleepTimer()">Atur Manual</button>
+            </div>
+            <button class="play-btn" style="background: #ff5555; width: 100%;" onclick="cancelSleepTimer()">Matikan Timer</button>
+        </div>
+    </div>
+
+    <!-- Modal User Agent -->
+    <div id="ua-modal" onclick="closeUAModalOutside(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-header">
+                <h4 style="margin: 0;">Pengaturan User Agent</h4>
+                <button class="close-btn" onclick="closeUAModal()">✕</button>
+            </div>
+            <div style="margin: 15px 0; text-align: left;">
+                <label style="font-size: 12px; color: #aaa; display: block; margin-bottom: 5px;">Pilih atau Masukkan Custom User Agent:</label>
+                <select id="uaSelect" onchange="selectPresetUA()" style="width: 100%; background: #1a1a1a; border: 1px solid #444; color: white; padding: 8px; border-radius: 5px; margin-bottom: 10px; font-size: 12px;">
+                    <option value="">-- Pilih Preset --</option>
+                    <option value="default">Default Browser</option>
+                    <option value="chrome_desktop">Chrome Desktop (Windows)</option>
+                    <option value="safari_mac">Safari (Macintosh)</option>
+                    <option value="firefox_desktop">Firefox (Desktop)</option>
+                    <option value="android_mobile">Android Mobile</option>
+                    <option value="iphone_mobile">iPhone Safari</option>
+                </select>
+                <textarea id="customUAInput" placeholder="Atau ketik custom User Agent string di sini..." style="width: 100%; height: 80px; background: #1a1a1a; border: 1px solid #444; color: white; padding: 8px; border-radius: 5px; font-size: 11px; resize: none;"></textarea>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="play-btn" style="flex: 1;" onclick="saveUserAgent()">Simpan & Terapkan</button>
+                <button class="sleep-timer-btn" style="flex: 1; background: #444; margin: 0;" onclick="resetUserAgent()">Reset Default</button>
             </div>
         </div>
     </div>
@@ -186,6 +277,161 @@
             if (event.target.id === 'playlist-modal') {
                 closePlaylist();
             }
+        }
+
+        function toggleSleepMode() {
+            document.body.classList.toggle('sleep-mode');
+        }
+
+        let sleepTimerId = null;
+        let sleepCountdownInterval = null;
+        let remainingSeconds = 0;
+
+        function openSleepModal() {
+            document.getElementById('sleep-modal').style.display = 'flex';
+            updateTimerStatusDisplay();
+        }
+
+        function closeSleepModal() {
+            document.getElementById('sleep-modal').style.display = 'none';
+        }
+
+        function closeSleepModalOutside(event) {
+            if (event.target.id === 'sleep-modal') {
+                closeSleepModal();
+            }
+        }
+
+        function setSleepTimer(minutes) {
+            cancelSleepTimer();
+            remainingSeconds = minutes * 60;
+            
+            let statusText = document.getElementById('timerStatusText');
+            statusText.innerText = `Aktif (${minutes} menit)`;
+
+            sleepCountdownInterval = setInterval(() => {
+                remainingSeconds--;
+                let m = Math.floor(remainingSeconds / 60);
+                let s = remainingSeconds % 60;
+                statusText.innerText = `Aktif (${m}m ${s}s lagi)`;
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(sleepCountdownInterval);
+                    triggerSleepAction();
+                }
+            }, 1000);
+
+            closeSleepModal();
+        }
+
+        // Picture-in-Picture (PiP) Handler
+        async function togglePiP() {
+            // Coba cari elemen <video> di dalam player (termasuk iframe jika memungkinkan/HTML5 video standar)
+            let videoEl = document.querySelector('video');
+            
+            // Jika tidak ketemu langsung di dokumen utama, coba cek di dalam iframe embed Twitch/YouTube
+            if (!videoEl) {
+                try {
+                    let iframe = document.querySelector('#playerContainer iframe');
+                    if (iframe && iframe.contentDocument) {
+                        videoEl = iframe.contentDocument.querySelector('video');
+                    }
+                } catch (e) {
+                    console.log('Cross-origin iframe video detection restricted:', e);
+                }
+            }
+
+            if (!videoEl) {
+                alert('Elemen video aktif tidak ditemukan di halaman ini atau dibatasi oleh kebijakan keamanan iframe (Cross-Origin). Pastikan pemutar dalam mode pemutaran HTML5 video langsung.');
+                return;
+            }
+
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else {
+                    if (document.pictureInPictureEnabled) {
+                        await videoEl.requestPictureInPicture();
+                    } else {
+                        alert('Mode Picture-in-Picture tidak didukung oleh browser/perangkat Anda.');
+                    }
+                }
+            } catch (err) {
+                console.error('Gagal mengaktifkan PiP:', err);
+                alert('Gagal mengaktifkan Picture-in-Picture: ' + err.message);
+            }
+        }
+
+        function openUAModal() {
+            document.getElementById('ua-modal').style.display = 'flex';
+            let currentUA = localStorage.getItem('custom_user_agent') || navigator.userAgent;
+            document.getElementById('customUAInput').value = currentUA;
+        }
+
+        function closeUAModal() {
+            document.getElementById('ua-modal').style.display = 'none';
+        }
+
+        function closeUAModalOutside(event) {
+            if (event.target.id === 'ua-modal') {
+                closeUAModal();
+            }
+        }
+
+        function selectPresetUA() {
+            let select = document.getElementById('uaSelect');
+            let val = select.value;
+            if (val && uaPresets[val]) {
+                document.getElementById('customUAInput').value = uaPresets[val];
+            } else if (val === 'default') {
+                document.getElementById('customUAInput').value = navigator.userAgent;
+            }
+        }
+
+        function saveUserAgent() {
+            let ua = document.getElementById('customUAInput').value.trim();
+            if (ua) {
+                localStorage.setItem('custom_user_agent', ua);
+                alert('User Agent berhasil disimpan! (Catatan: Memerlukan plugin/Capacitor HTTP/InAppBrowser atau WebView hook jika diterapkan secara native mendalam).');
+                closeUAModal();
+            } else {
+                alert('User Agent tidak boleh kosong!');
+            }
+        }
+
+        function resetUserAgent() {
+            localStorage.removeItem('custom_user_agent');
+            document.getElementById('customUAInput').value = navigator.userAgent;
+            document.getElementById('uaSelect').value = 'default';
+            alert('User Agent dikembalikan ke default.');
+        }
+
+        function cancelSleepTimer() {
+            if (sleepCountdownInterval) clearInterval(sleepCountdownInterval);
+            sleepCountdownInterval = null;
+            remainingSeconds = 0;
+            document.getElementById('timerStatusText').innerText = 'Nonaktif';
+        }
+
+        function updateTimerStatusDisplay() {
+            let statusText = document.getElementById('timerStatusText');
+            if (!sleepCountdownInterval) {
+                statusText.innerText = 'Nonaktif';
+            }
+        }
+
+        function triggerSleepAction() {
+            // Hentikan pemutaran video/stream dengan mengosongkan player
+            document.getElementById('player-box').innerHTML = '<span style="color: #555; font-size: 13px;">Sleep Timer Berhenti. Pemutaran dihentikan.</span>';
+            document.getElementById('chat-box').innerHTML = '<div class="chat-placeholder">Kolom Live Chat / Komentar</div>';
+            
+            // Tampilkan layar sleep gelap
+            document.body.classList.add('sleep-active');
+        }
+
+        function cancelSleepMode() {
+            document.body.classList.remove('sleep-active');
+            cancelSleepTimer();
         }
 
         function detectAndPlay() {
@@ -237,6 +483,52 @@
                 chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${hostname}&parent=localhost&parent=127.0.0.1"></iframe>`;
             }
         }
+    </script>
+</body>
+</html>
+        // AdBlock State & Injection Handler
+        let adBlockEnabled = localStorage.getItem('adblock_enabled') !== 'false';
+
+        function updateAdBlockUI() {
+            let btn = document.getElementById('adblockBtn');
+            if (btn) {
+                if (adBlockEnabled) {
+                    btn.style.background = '#28a745';
+                    btn.title = 'AdBlock: Aktif';
+                } else {
+                    btn.style.background = '#dc3545';
+                    btn.title = 'AdBlock: Nonaktif';
+                }
+            }
+        }
+
+        function toggleAdBlock() {
+            adBlockEnabled = !adBlockEnabled;
+            localStorage.setItem('adblock_enabled', adBlockEnabled);
+            updateAdBlockUI();
+            alert('AdBlock ' + (adBlockEnabled ? 'Diaktifkan 🛡️' : 'Dimatikan ⚠️') + '\nMemuat ulang pemutar untuk menerapkan perubahan...');
+            let input = document.getElementById('streamInput').value;
+            if (input) {
+                detectAndPlay();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAdBlockUI();
+            let style = document.createElement('style');
+            style.id = 'dynamic-adblock-style';
+            style.innerHTML = `
+                div[class*="ad-banner"], div[class*="ads-"], section[class*="promoted"],
+                iframe[src*="googlesyndication"], iframe[src*="amazon-adsystem"],
+                .tw-ad-banner, .extension-overlay, div[data-a-target="video-ad-label"] {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    pointer-events: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+        });
     </script>
 </body>
 </html>

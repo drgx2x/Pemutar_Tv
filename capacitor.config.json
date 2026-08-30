@@ -1,6 +1,6 @@
 {
-  "appId": "com.twitch.pemutar",
-  "appName": "Pemutar Twitch",
+  "appId": "com.videoplayer.app",
+  "appName": "Pemutar Video",
   "webDir": "www",
   "bundledWebRuntime": false
 }
