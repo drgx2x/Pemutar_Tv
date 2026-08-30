@@ -240,4 +240,221 @@
     <script src="streams.js"></script>
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
+        const uaPresets = {
+            chrome_desktop: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            safari_mac: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+            firefox_desktop: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0",
+            android_mobile: "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+            iphone_mobile: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+        };
+
         function renderPlaylist() {
+            let container = document.getElementById('playlist-container');
+            if (typeof myStreams === 'undefined' || !myStreams || myStreams.length === 0) {
+                container.innerHTML = '<p style="color: #ff5555; text-align: center;">Playlist kosong atau streams.js gagal dimuat.</p>';
+                return;
+            }
+
+            container.innerHTML = "";
+            myStreams.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'playlist-item';
+                div.innerHTML = `
+                    <span class="playlist-title">${item.name}</span>
+                    <span class="playlist-type">${(item.type || 'stream').toUpperCase()}</span>
+                `;
+                div.onclick = () => {
+                    document.getElementById('streamInput').value = item.url || item.name;
+                    detectAndPlay();
+                    closePlaylist();
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function openPlaylist() {
+            document.getElementById('playlist-modal').style.display = 'flex';
+            renderPlaylist();
+        }
+
+        function closePlaylist() {
+            document.getElementById('playlist-modal').style.display = 'none';
+        }
+
+        function closePlaylistOutside(event) {
+            if (event.target.id === 'playlist-modal') {
+                closePlaylist();
+            }
+        }
+
+        let sleepTimerId = null;
+        let sleepCountdownInterval = null;
+        let remainingSeconds = 0;
+
+        function openSleepModal() {
+            document.getElementById('sleep-modal').style.display = 'flex';
+            updateTimerStatusDisplay();
+        }
+
+        function closeSleepModal() {
+            document.getElementById('sleep-modal').style.display = 'none';
+        }
+
+        function closeSleepModalOutside(event) {
+            if (event.target.id === 'sleep-modal') {
+                closeSleepModal();
+            }
+        }
+
+        function setSleepTimer(minutes) {
+            cancelSleepTimer();
+            remainingSeconds = minutes * 60;
+            
+            let statusText = document.getElementById('timerStatusText');
+            statusText.innerText = `Aktif (${minutes} menit)`;
+
+            sleepCountdownInterval = setInterval(() => {
+                remainingSeconds--;
+                let m = Math.floor(remainingSeconds / 60);
+                let s = remainingSeconds % 60;
+                statusText.innerText = `Aktif (${m}m ${s}s lagi)`;
+
+                if (remainingSeconds <= 0) {
+                    clearInterval(sleepCountdownInterval);
+                    triggerSleepAction();
+                }
+            }, 1000);
+
+            closeSleepModal();
+        }
+
+        function setManualSleepTimer() {
+            let minutes = parseInt(document.getElementById('manualMinutes').value);
+            if (minutes && minutes > 0) {
+                setSleepTimer(minutes);
+            } else {
+                alert('Masukkan jumlah menit yang valid!');
+            }
+        }
+
+        function openUAModal() {
+            document.getElementById('ua-modal').style.display = 'flex';
+            let currentUA = localStorage.getItem('custom_user_agent') || navigator.userAgent;
+            document.getElementById('customUAInput').value = currentUA;
+        }
+
+        function closeUAModal() {
+            document.getElementById('ua-modal').style.display = 'none';
+        }
+
+        function closeUAModalOutside(event) {
+            if (event.target.id === 'ua-modal') {
+                closeUAModal();
+            }
+        }
+
+        function selectPresetUA() {
+            let select = document.getElementById('uaSelect');
+            let val = select.value;
+            if (val && uaPresets[val]) {
+                document.getElementById('customUAInput').value = uaPresets[val];
+            } else if (val === 'default') {
+                document.getElementById('customUAInput').value = navigator.userAgent;
+            }
+        }
+
+        function saveUserAgent() {
+            let ua = document.getElementById('customUAInput').value.trim();
+            if (ua) {
+                localStorage.setItem('custom_user_agent', ua);
+                alert('User Agent berhasil disimpan!');
+                closeUAModal();
+            } else {
+                alert('User Agent tidak boleh kosong!');
+            }
+        }
+
+        function resetUserAgent() {
+            localStorage.removeItem('custom_user_agent');
+            document.getElementById('customUAInput').value = navigator.userAgent;
+            document.getElementById('uaSelect').value = 'default';
+            alert('User Agent dikembalikan ke default.');
+        }
+
+        function cancelSleepTimer() {
+            if (sleepCountdownInterval) clearInterval(sleepCountdownInterval);
+            sleepCountdownInterval = null;
+            remainingSeconds = 0;
+            document.getElementById('timerStatusText').innerText = 'Nonaktif';
+        }
+
+        function updateTimerStatusDisplay() {
+            let statusText = document.getElementById('timerStatusText');
+            if (!sleepCountdownInterval) {
+                statusText.innerText = 'Nonaktif';
+            }
+        }
+
+        function triggerSleepAction() {
+            document.getElementById('player-box').innerHTML = '<span style="color: #555; font-size: 13px;">Sleep Timer Berhenti. Pemutaran dihentikan.</span>';
+            document.getElementById('chat-box').innerHTML = '<div class="chat-placeholder">Kolom Live Chat / Komentar</div>';
+            document.body.classList.add('sleep-active');
+        }
+
+        function cancelSleepMode() {
+            document.body.classList.remove('sleep-active');
+            cancelSleepTimer();
+        }
+
+        function detectAndPlay() {
+            let input = document.getElementById('streamInput').value.trim();
+            let playerBox = document.getElementById('player-box');
+            let chatBox = document.getElementById('chat-box');
+            if (!input) return;
+
+            playerBox.innerHTML = "";
+            chatBox.innerHTML = "";
+
+            if (input.includes("youtube.com") || input.includes("youtu.be")) {
+                let videoId = "";
+                if (input.includes("youtu.be/")) {
+                    videoId = input.split("youtu.be/")[1].split("?")[0];
+                } else if (input.includes("watch?v=")) {
+                    videoId = input.split("watch?v=")[1].split("&")[0];
+                } else if (input.includes("embed/")) {
+                    videoId = input.split("embed/")[1].split("?")[0];
+                }
+
+                if (videoId) {
+                    let hostname = window.location.hostname || "localhost";
+                    playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    chatBox.innerHTML = `<iframe src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${hostname}"></iframe>`;
+                } else {
+                    playerBox.innerHTML = `<span style="color: red;">URL YouTube tidak valid</span>`;
+                    chatBox.innerHTML = `<div class="chat-placeholder">Chat tidak tersedia</div>`;
+                }
+            } else {
+                let channelName = input;
+                if (input.includes("twitch.tv/")) {
+                    let parts = input.split("twitch.tv/");
+                    channelName = parts[1].split("/")[0];
+                }
+
+                let twitchEmbedDiv = document.createElement('div');
+                twitchEmbedDiv.id = 'twitch-embed';
+                playerBox.appendChild(twitchEmbedDiv);
+
+                new Twitch.Embed("twitch-embed", {
+                    width: "100%",
+                    height: "100%",
+                    channel: channelName,
+                    parent: ["localhost", "127.0.0.1", "capacitor.localhost", window.location.hostname]
+                });
+
+                let hostname = window.location.hostname || "localhost";
+                chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${hostname}&parent=localhost&parent=127.0.0.1"></iframe>`;
+            }
+        }
+    </script>
+</body>
+</html>
