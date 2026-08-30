@@ -38,5 +38,13 @@ const myStreams = [
     { name: "NBC Now", url: "https://m.youtube.com/watch?v=mtfScgprugU", type: "youtube" },
     { name: "Bloomberg", url: "https://m.youtube.com/watch?v=QB5BNdBFujE", type: "youtube" },
     { name: "Yahoo Finance", url: "https://m.youtube.com/watch?v=KQp-e_XQnDE", type: "youtube" },
-    { name: "Al Jazeera", url: "https://m.youtube.com/watch?v=gCNeDWCI0vo", type: "youtube" }
+    { name: "Al Jazeera", url: "https://www.youtube.com/watch?v=gCNeDWCI0vo", type: "youtube" },
+    { name: "Lofi Girl", url: "https://www.twitch.tv/lofigirl", type: "twitch" },
+    { name: "Leekbeats", url: "https://www.twitch.tv/leekbeats", type: "twitch" },
+    { name: "Yu-Gi-Oh!", url: "https://www.twitch.tv/yugioh_subs", type: "twitch" },
+    { name: "Police Chase", url: "https://www.twitch.tv/policechasenetwork247", type: "twitch" },
+    { name: "RetroCrush", url: "https://www.twitch.tv/retrocrush_tv", type: "twitch" },
+    { name: "FailArmy", url: "https://www.twitch.tv/failarmy", type: "twitch" },
+    { name: "The Asylum", url: "https://www.twitch.tv/theasylummovies", type: "twitch" },
+    { name: "Tokyo Street View", url: "https://www.twitch.tv/tokyostreetview", type: "twitch" }
 ];
