@@ -187,21 +187,37 @@
         </div>
     </div>
 
-    <script>
-        // Daftar URL / Channel favorit Anda (Bisa ditambah atau diubah kapan saja)
-        const myStreams = [
-            { name: "Shroud (Twitch)", url: "shroud" },
-            { name: "Lofi Girl Live (YouTube)", url: "https://www.youtube.com/watch?v=jfKfPfyJRdk" },
-            { name: "NASA Live (YouTube)", url: "https://www.youtube.com/watch?v=21X5lGlDOfg" }
-        ];
+    <!-- Panggil file streams.js eksternal -->
+    <script src="streams.js"></script>
 
+    <script>
         function renderStreamList() {
             const container = document.getElementById('stream-items-container');
             container.innerHTML = '';
+            
+            // Memeriksa apakah variabel myStreams dari streams.js tersedia
+            if (typeof myStreams === 'undefined' || !Array.isArray(myStreams)) {
+                container.innerHTML = '<div style="color:#ff4444; text-align:center;">File streams.js tidak ditemukan atau format salah!</div>';
+                return;
+            }
+
             myStreams.forEach((stream, index) => {
+                let displayName = stream.name;
+
+                // Jika name kosong, buat otomatis dari URL/Channel
+                if (!displayName || displayName.trim() === "") {
+                    if (stream.url.includes('youtube.com') || stream.url.includes('youtu.be')) {
+                        // Ambil ID YouTube atau fallback jadi "YouTube Live"
+                        displayName = "YouTube Live (" + (stream.url.split('v=')[1] ? stream.url.split('v=')[1].substring(0, 8) + '...' : 'Stream') + ")";
+                    } else {
+                        // Kapitalisasi nama channel Twitch (contoh: "shroud" -> "Shroud")
+                        displayName = stream.url.charAt(0).toUpperCase() + stream.url.slice(1) + " (Twitch)";
+                    }
+                }
+
                 const div = document.createElement('div');
                 div.className = 'stream-item';
-                div.innerHTML = `<span>${stream.name}</span> <span style="font-size:12px; color:#aaa;">▶ Play</span>`;
+                div.innerHTML = `<span>${displayName}</span> <span style="font-size:12px; color:#aaa;">▶ Play</span>`;
                 div.onclick = () => {
                     document.getElementById('streamInput').value = stream.url;
                     closeModal();
