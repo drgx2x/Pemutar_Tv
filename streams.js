@@ -39,6 +39,7 @@ const myStreams = [
     { name: "Bloomberg", url: "https://m.youtube.com/watch?v=QB5BNdBFujE", type: "youtube" },
     { name: "Yahoo Finance", url: "https://m.youtube.com/watch?v=KQp-e_XQnDE", type: "youtube" },
     { name: "Al Jazeera", url: "https://m.youtube.com/watch?v=gCNeDWCI0vo", type: "youtube" },
+    { name: "rifftrax", url: "https://m.twitch.tv/rifftrax", type: "twitch" },
     { name: "Lofi Girl", url: "https://www.twitch.tv/lofigirl", type: "twitch" },
     { name: "Leekbeats", url: "https://www.twitch.tv/leekbeats", type: "twitch" },
     { name: "Yu-Gi-Oh!", url: "https://www.twitch.tv/yugioh_subs", type: "twitch" },
