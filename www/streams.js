@@ -3,7 +3,7 @@
     { "name": "Official iNews", "url": "https://m.youtube.com/watch?v=WHTPYAvakTg", "type": "youtube" },
     { "name": "CNN Indonesia", "url": "https://m.youtube.com/watch?v=PDDOkUq33Sw", "type": "youtube" },
     { "name": "tvOne", "url": "https://m.youtube.com/watch?v=rQJoEpzKkNk", "type": "youtube" },
-    { "name": "MetroTV", "url": "https://m.youtube.com/watch?v=hjNOqYN6UJo", "type": "youtube" },
+    { "name": "MetroTV", "url": "https://www.youtube.com/watch?v=hjNOqYN6UJo", "type": "youtube" },
     { "name": "Sky News", "url": "https://www.youtube.com/watch?v=xDWQ3LkccY8", "type": "youtube" },
     { "name": "CNN", "url": "https://m.youtube.com/watch?v=GotlA1KKWoo", "type": "youtube" },
     { "name": "ABC News", "url": "https://www.youtube.com/watch?v=iipR5yUp36o", "type": "youtube" },
