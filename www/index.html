@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stream Player</title>
     <style>
+        /* Pastikan body menutupi seluruh area layar */
         body { 
             font-family: sans-serif; 
             background: #121212; 
@@ -16,6 +17,8 @@
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: manipulation;
         }
 
         /* Top Bar: List button, Input, Play button */
@@ -406,9 +409,11 @@
                     // Sembunyikan status bar / system bars di Android/iOS
                     if (StatusBar) {
                         await StatusBar.hide();
+                        // Delay tambahan untuk memastikan Android benar-benar menyembunyikan navigation bar
+                        setTimeout(async () => { await StatusBar.hide(); }, 500);
                     }
                     
-                    // Paksa layar berputar ke landscape (Capacitor & Web API fallback)
+                    // Paksa layar berputar ke landscape
                     if (ScreenOrientation) {
                         await ScreenOrientation.lock({ orientation: 'landscape' });
                     } else if (screen.orientation && screen.orientation.lock) {
@@ -439,9 +444,9 @@
         // otomatis sembunyikan kembali setelah beberapa saat agar tetap fullscreen
         window.addEventListener("touchstart", function() {
             if (document.fullscreenElement && window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
-                setTimeout(() => {
-                    window.Capacitor.Plugins.StatusBar.hide().catch(() => {});
-                }, 1500);
+                setTimeout(async () => {
+                    await window.Capacitor.Plugins.StatusBar.hide();
+                }, 1000);
             }
         }, { passive: true });
 
