@@ -423,14 +423,6 @@
                 console.log("Screen orientation lock error:", err);
             }
         });
-                document.body.classList.remove('fullscreen-landscape');
-                
-                // Kembalikan orientasi layar ke bebas/normal
-                if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock();
-                }
-            }
-        });
 
         function detectAndPlay() {
             let input = document.getElementById('streamInput').value.trim();
