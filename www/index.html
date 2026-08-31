@@ -257,14 +257,18 @@
     <!-- Load streams via Fetch API agar selalu update dari GitHub -->
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
-        // Paksa hide status bar saat aplikasi dimuat
+        // Paksa tampilkan status bar saat aplikasi dimuat
         document.addEventListener('deviceready', async () => {
             if (window.Capacitor && window.Capacitor.Plugins) {
                 const { StatusBar } = window.Capacitor.Plugins;
                 
                 if (StatusBar) {
-                    await StatusBar.setOverlaysWebView({ overlay: true });
-                    await StatusBar.hide();
+                    // overlay: false membuat konten web berada DI BAWAH status bar (tidak tertutup)
+                    await StatusBar.setOverlaysWebView({ overlay: false }); 
+                    // Tampilkan status bar
+                    await StatusBar.show();
+                    // Atur gaya status bar
+                    await StatusBar.setStyle({ style: 'DARK' });
                 }
             }
         }, false);
