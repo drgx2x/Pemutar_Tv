@@ -368,50 +368,6 @@
             }
         }
 
-        function openUAModal() {
-            document.getElementById('ua-modal').style.display = 'flex';
-            let currentUA = localStorage.getItem('custom_user_agent') || navigator.userAgent;
-            document.getElementById('customUAInput').value = currentUA;
-        }
-
-        function closeUAModal() {
-            document.getElementById('ua-modal').style.display = 'none';
-        }
-
-        function closeUAModalOutside(event) {
-            if (event.target.id === 'ua-modal') {
-                closeUAModal();
-            }
-        }
-
-        function selectPresetUA() {
-            let select = document.getElementById('uaSelect');
-            let val = select.value;
-            if (val && uaPresets[val]) {
-                document.getElementById('customUAInput').value = uaPresets[val];
-            } else if (val === 'default') {
-                document.getElementById('customUAInput').value = navigator.userAgent;
-            }
-        }
-
-        function saveUserAgent() {
-            let ua = document.getElementById('customUAInput').value.trim();
-            if (ua) {
-                localStorage.setItem('custom_user_agent', ua);
-                alert('User Agent berhasil disimpan!');
-                closeUAModal();
-            } else {
-                alert('User Agent tidak boleh kosong!');
-            }
-        }
-
-        function resetUserAgent() {
-            localStorage.removeItem('custom_user_agent');
-            document.getElementById('customUAInput').value = navigator.userAgent;
-            document.getElementById('uaSelect').value = 'default';
-            alert('User Agent dikembalikan ke default.');
-        }
-
         function cancelSleepTimer() {
             if (sleepCountdownInterval) clearInterval(sleepCountdownInterval);
             sleepCountdownInterval = null;
