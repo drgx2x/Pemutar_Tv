@@ -127,20 +127,23 @@
 
         /* Class untuk mode fullscreen landscape */
         body.fullscreen-landscape {
-            flex-direction: row;
+            flex-direction: row !important;
         }
         body.fullscreen-landscape #player-wrapper {
-            flex-direction: row;
-            height: 100%;
+            flex-direction: row !important;
+            height: 100% !important;
+            width: 100% !important;
         }
         body.fullscreen-landscape #player-box {
-            height: 100%;
-            width: 70%;
+            height: 100% !important;
+            width: 70% !important;
+            flex-shrink: 0;
         }
         body.fullscreen-landscape #chat-box {
-            width: 30%;
-            height: 100%;
+            width: 30% !important;
+            height: 100% !important;
             background-color: #242424;
+            display: flex !important;
         }
 
         /* Modal Playlist Styles */
@@ -190,7 +193,6 @@
     </div>
 
     <div class="top-bar" style="justify-content: flex-end;">
-        <button class="playlist-btn" id="uaBtn" onclick="openUAModal()" title="User Agent">🌐 UA</button>
         <button class="playlist-btn" id="sleepBtn" onclick="openSleepModal()" title="Sleep Timer">🌙 Sleep</button>
     </div>
 
@@ -249,33 +251,6 @@
         </div>
     </div>
 
-    <!-- Modal User Agent -->
-    <div id="ua-modal" onclick="closeUAModalOutside(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-        <div class="modal-content" style="text-align: center;">
-            <div class="modal-header">
-                <h4 style="margin: 0;">Pengaturan User Agent</h4>
-                <button class="close-btn" onclick="closeUAModal()">✕</button>
-            </div>
-            <div style="margin: 15px 0; text-align: left;">
-                <label style="font-size: 12px; color: #aaa; display: block; margin-bottom: 5px;">Pilih atau Masukkan Custom User Agent:</label>
-                <select id="uaSelect" onchange="selectPresetUA()" style="width: 100%; background: #1a1a1a; border: 1px solid #444; color: white; padding: 8px; border-radius: 5px; margin-bottom: 10px; font-size: 12px;">
-                    <option value="">-- Pilih Preset --</option>
-                    <option value="default">Default Browser</option>
-                    <option value="chrome_desktop">Chrome Desktop (Windows)</option>
-                    <option value="safari_mac">Safari (Macintosh)</option>
-                    <option value="firefox_desktop">Firefox (Desktop)</option>
-                    <option value="android_mobile">Android Mobile</option>
-                    <option value="iphone_mobile">iPhone Safari</option>
-                </select>
-                <textarea id="customUAInput" placeholder="Atau ketik custom User Agent string di sini..." style="width: 100%; height: 80px; background: #1a1a1a; border: 1px solid #444; color: white; padding: 8px; border-radius: 5px; font-size: 11px; resize: none;"></textarea>
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <button class="play-btn" style="flex: 1;" onclick="saveUserAgent()">Simpan & Terapkan</button>
-                <button class="sleep-timer-btn" style="flex: 1; background: #444; margin: 0;" onclick="resetUserAgent()">Reset Default</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Load streams via Fetch API agar selalu update dari GitHub -->
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
@@ -303,15 +278,8 @@
         loadStreams();
     </script>
     <script>
-        const uaPresets = {
-            chrome_desktop: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            safari_mac: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
-            firefox_desktop: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0",
-            android_mobile: "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
-            iphone_mobile: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-        };
-
-        function renderPlaylist() {
+        let myStreams = [];
+        async function loadStreams() {
             let container = document.getElementById('playlist-container');
             if (typeof myStreams === 'undefined' || !myStreams || myStreams.length === 0) {
                 container.innerHTML = '<p style="color: #ff5555; text-align: center;">Playlist kosong atau streams.js gagal dimuat.</p>';
@@ -472,13 +440,23 @@
         // Deteksi perubahan fullscreen untuk layout landscape
         document.addEventListener("fullscreenchange", function() {
             if (document.fullscreenElement) {
-                // Saat masuk fullscreen, cek orientasi
-                if (window.innerHeight < window.innerWidth) {
-                    document.body.classList.add('fullscreen-landscape');
+                // Tambahkan class layout landscape
+                document.body.classList.add('fullscreen-landscape');
+                
+                // Paksa layar berputar ke landscape (Web API & Capacitor fallback)
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(function(error) {
+                        console.log("Gagal mengunci orientasi:", error);
+                    });
                 }
             } else {
-                // Saat keluar fullscreen, hapus class
+                // Hapus class layout landscape
                 document.body.classList.remove('fullscreen-landscape');
+                
+                // Kembalikan orientasi layar ke bebas/normal
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
             }
         });
 
