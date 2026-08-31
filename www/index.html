@@ -12,6 +12,8 @@
             color: #fff; 
             margin: 0; 
             padding: 8px; 
+            /* Selalu beri ruang untuk status bar agar tidak tertutup */
+            padding-top: env(safe-area-inset-top, 25px); 
             box-sizing: border-box; 
             display: flex;
             flex-direction: column;
@@ -263,9 +265,9 @@
                 const { StatusBar } = window.Capacitor.Plugins;
                 
                 if (StatusBar) {
-                    // overlay: false membuat konten web berada DI BAWAH status bar (tidak tertutup)
-                    await StatusBar.setOverlaysWebView({ overlay: false }); 
-                    // Tampilkan status bar
+                    // overlay: true agar status bar tetap ada di atas konten
+                    await StatusBar.setOverlaysWebView({ overlay: true }); 
+                    // Pastikan status bar selalu tampil
                     await StatusBar.show();
                     // Atur gaya status bar
                     await StatusBar.setStyle({ style: 'DARK' });
