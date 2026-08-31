@@ -277,6 +277,7 @@
     </div>
 
     <!-- Load streams via Fetch API agar selalu update dari GitHub -->
+    <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
         let myStreams = [];
         async function loadStreams() {
@@ -289,10 +290,8 @@
                     throw new Error('Network response was not ok: ' + response.status);
                 }
                 
-                const text = await response.text();
-                // Membersihkan teks jika ada deklarasi variabel JavaScript (const myStreams = ...)
-                const jsonText = text.replace(/const myStreams\s*=\s*/, '').replace(/;$/, '');
-                myStreams = JSON.parse(jsonText);
+                // Sekarang langsung gunakan response.json()
+                myStreams = await response.json();
                 
                 console.log("Playlist berhasil dimuat!");
             } catch (error) {
@@ -303,7 +302,6 @@
         // Jalankan saat aplikasi dibuka
         loadStreams();
     </script>
-    <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
         const uaPresets = {
             chrome_desktop: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
