@@ -65,6 +65,7 @@
         }
         button.play-btn:hover { background: #772ce8; }
 
+        /* Player Wrapper: Player di atas, Chat di bawah */
         #player-wrapper { 
             display: flex; 
             flex-direction: column; 
@@ -91,60 +92,22 @@
         #chat-box { 
             width: 100%; 
             flex-grow: 1; 
-            background: #181818; /* YouTube dark theme color */
+            background: #0e0e0e; 
             border-radius: 6px; 
             overflow: hidden; 
-            border: 1px solid #333; 
+            border: 1px solid #222; 
             display: flex; 
             flex-direction: column; 
-            min-height: 250px;
+            min-height: 120px;
         }
         #chat-box iframe { 
             width: 100%; 
             height: 100%; 
             border: none; 
-            /* Hapus filter invert dan ganti dengan tema gelap jika didukung */
+            background-color: #0e0e0e;
+            color-scheme: dark;
         }
-        .chat-placeholder { color: #aaa; font-size: 13px; display: flex; align-items: center; justify-content: center; height: 100%; }
-
-        /* Gaya default untuk mode potrait (bukan fullscreen) */
-        #player-wrapper {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-        }
-        #player-box {
-            width: 100%;
-            height: 40%; /* Video diperkecil jadi 40% */
-        }
-        #chat-box {
-            width: 100%;
-            height: 60%; /* Kolom komentar diperlebar jadi 60% */
-            background-color: #242424; /* Warna lebih terang dari hitam pekat (dark gray) */
-            border-top: 1px solid #333;
-        }
-
-        /* Class untuk mode fullscreen landscape */
-        body.fullscreen-landscape {
-            flex-direction: row !important;
-        }
-        body.fullscreen-landscape #player-wrapper {
-            flex-direction: row !important;
-            height: 100% !important;
-            width: 100% !important;
-        }
-        body.fullscreen-landscape #player-box {
-            height: 100% !important;
-            width: 70% !important;
-            flex-shrink: 0;
-        }
-        body.fullscreen-landscape #chat-box {
-            width: 30% !important;
-            height: 100% !important;
-            background-color: #242424;
-            display: flex !important;
-        }
+        .chat-placeholder { color: #777; font-size: 13px; display: flex; align-items: center; justify-content: center; height: 100%; }
 
         /* Modal Playlist Styles */
         #playlist-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
@@ -155,33 +118,6 @@
         .playlist-item:hover { background: #3a3a3a; }
         .playlist-title { font-size: 14px; font-weight: bold; }
         .playlist-type { font-size: 11px; background: #9146FF; padding: 2px 6px; border-radius: 3px; }
-
-        /* Sleep Mode Styles */
-        #sleep-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 9999;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #777;
-        }
-        body.sleep-active #sleep-overlay {
-            display: flex;
-        }
-        .sleep-timer-btn {
-            background: #2a2a2a;
-            color: white;
-            border: 1px solid #444;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 4px;
-            font-size: 13px;
-        }
-        .sleep-timer-btn:hover { background: #3a3a3a; }
     </style>
 </head>
 <body>
@@ -190,10 +126,6 @@
         <button class="playlist-btn" onclick="openPlaylist()">≡ List</button>
         <input type="text" id="streamInput" placeholder="URL / Channel">
         <button class="play-btn" onclick="detectAndPlay()">Putar</button>
-    </div>
-
-    <div class="top-bar" style="justify-content: flex-end;">
-        <button class="playlist-btn" id="sleepBtn" onclick="openSleepModal()" title="Sleep Timer">🌙 Sleep</button>
     </div>
 
     <div id="player-wrapper">
@@ -218,70 +150,28 @@
         </div>
     </div>
 
-    <!-- Sleep Mode Overlay / Screen off simulator -->
-    <div id="sleep-overlay" onclick="cancelSleepMode()">
-        <div style="font-size: 32px; margin-bottom: 10px;">🌙</div>
-        <div style="font-size: 14px; font-family: monospace;">Sleep Timer Aktif</div>
-        <div style="font-size: 11px; color: #444; margin-top: 5px;">Sentuh layar untuk batal & bangunkan</div>
-    </div>
-
-    <!-- Modal Sleep Timer -->
-    <div id="sleep-modal" onclick="closeSleepModalOutside(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-        <div class="modal-content" style="text-align: center;">
-            <div class="modal-header">
-                <h4 style="margin: 0;">Pengatur Waktu Tidur (Sleep Timer)</h4>
-                <button class="close-btn" onclick="closeSleepModal()">✕</button>
-            </div>
-            <div id="sleep-status-info" style="margin: 15px 0; font-size: 13px; color: #aaa;">
-                Status: <span id="timerStatusText" style="color: #9146FF; font-weight: bold;">Nonaktif</span>
-            </div>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 12px;">
-                <button class="sleep-timer-btn" onclick="setSleepTimer(10)">10 Menit</button>
-                <button class="sleep-timer-btn" onclick="setSleepTimer(15)">15 Menit</button>
-                <button class="sleep-timer-btn" onclick="setSleepTimer(30)">30 Menit</button>
-                <button class="sleep-timer-btn" onclick="setSleepTimer(45)">45 Menit</button>
-                <button class="sleep-timer-btn" onclick="setSleepTimer(60)">60 Menit</button>
-            </div>
-            
-            <div style="display: flex; gap: 6px; margin-bottom: 15px; justify-content: center; align-items: center;">
-                <input type="number" id="manualMinutes" placeholder="Menit manual" min="1" max="720" style="background: #1a1a1a; border: 1px solid #444; color: white; padding: 6px 10px; border-radius: 5px; width: 120px; font-size: 13px;">
-                <button class="sleep-timer-btn" style="margin: 0;" onclick="setManualSleepTimer()">Atur Manual</button>
-            </div>
-            <button class="play-btn" style="background: #ff5555; width: 100%;" onclick="cancelSleepTimer()">Matikan Timer</button>
-        </div>
-    </div>
-
-    <!-- Load streams via Fetch API agar selalu update dari GitHub -->
+    <!-- Load streams.js directly as a script so myStreams is defined natively without fetch/CORS/parsing issues -->
+    <script src="streams.js"></script>
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
-        // Variabel global untuk menampung data stream
-        let myStreams = [];
-
-        // Fungsi untuk mengambil data dari GitHub
-        async function fetchStreams() {
-            try {
-                const url = 'https://raw.githubusercontent.com/drgx2x/Pemutar_Twitch/main/www/streams.js?t=' + new Date().getTime();
-                console.log("Mencoba memuat playlist dari:", url);
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.status);
+        // Otomatis ubah orientasi ke landscape saat masuk mode fullscreen di browser HP
+        document.addEventListener("fullscreenchange", function() {
+            if (document.fullscreenElement) {
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock("landscape").catch(function(err) {
+                        console.log("Screen orientation lock not supported or denied:", err);
+                    });
                 }
-                
-                myStreams = await response.json();
-                console.log("Playlist berhasil dimuat!");
-            } catch (error) {
-                console.error("Gagal memuat playlist:", error);
-                myStreams = []; // Fallback jika gagal
+            } else {
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
             }
-        }
+        });
 
-        // Jalankan saat aplikasi dibuka
-        fetchStreams();
-
-        // Fungsi untuk menampilkan playlist ke modal
-        async function loadStreams() {
+        function renderPlaylist() {
             let container = document.getElementById('playlist-container');
+            // Check if myStreams is available globally from streams.js
             if (typeof myStreams === 'undefined' || !myStreams || myStreams.length === 0) {
                 container.innerHTML = '<p style="color: #ff5555; text-align: center;">Playlist kosong atau streams.js gagal dimuat.</p>';
                 return;
@@ -306,7 +196,7 @@
 
         function openPlaylist() {
             document.getElementById('playlist-modal').style.display = 'flex';
-            loadStreams();
+            renderPlaylist();
         }
 
         function closePlaylist() {
@@ -319,134 +209,6 @@
             }
         }
 
-        let sleepCountdownInterval = null;
-        let remainingSeconds = 0;
-
-        function openSleepModal() {
-            document.getElementById('sleep-modal').style.display = 'flex';
-            updateTimerStatusDisplay();
-        }
-
-        function closeSleepModal() {
-            document.getElementById('sleep-modal').style.display = 'none';
-        }
-
-        function closeSleepModalOutside(event) {
-            if (event.target.id === 'sleep-modal') {
-                closeSleepModal();
-            }
-        }
-
-        function setSleepTimer(minutes) {
-            cancelSleepTimer();
-            remainingSeconds = minutes * 60;
-            
-            let statusText = document.getElementById('timerStatusText');
-            statusText.innerText = `Aktif (${minutes} menit)`;
-
-            sleepCountdownInterval = setInterval(() => {
-                remainingSeconds--;
-                let m = Math.floor(remainingSeconds / 60);
-                let s = remainingSeconds % 60;
-                statusText.innerText = `Aktif (${m}m ${s}s lagi)`;
-
-                if (remainingSeconds <= 0) {
-                    clearInterval(sleepCountdownInterval);
-                    triggerSleepAction();
-                }
-            }, 1000);
-
-            closeSleepModal();
-        }
-
-        function setManualSleepTimer() {
-            let minutes = parseInt(document.getElementById('manualMinutes').value);
-            if (minutes && minutes > 0) {
-                setSleepTimer(minutes);
-            } else {
-                alert('Masukkan jumlah menit yang valid!');
-            }
-        }
-
-        function cancelSleepTimer() {
-            if (sleepCountdownInterval) clearInterval(sleepCountdownInterval);
-            sleepCountdownInterval = null;
-            remainingSeconds = 0;
-            document.getElementById('timerStatusText').innerText = 'Nonaktif';
-        }
-
-        function updateTimerStatusDisplay() {
-            let statusText = document.getElementById('timerStatusText');
-            if (!sleepCountdownInterval) {
-                statusText.innerText = 'Nonaktif';
-            }
-        }
-
-        function triggerSleepAction() {
-            document.getElementById('player-box').innerHTML = '<span style="color: #555; font-size: 13px;">Sleep Timer Berhenti. Pemutaran dihentikan.</span>';
-            document.getElementById('chat-box').innerHTML = '<div class="chat-placeholder">Kolom Live Chat / Komentar</div>';
-            document.body.classList.add('sleep-active');
-        }
-
-        function cancelSleepMode() {
-            document.body.classList.remove('sleep-active');
-            cancelSleepTimer();
-        }
-
-        // Deteksi perubahan fullscreen untuk layout landscape & menyembunyikan StatusBar/System Bars
-        document.addEventListener("fullscreenchange", async function() {
-            try {
-                const ScreenOrientation = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.ScreenOrientation;
-                const StatusBar = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar;
-
-                if (document.fullscreenElement) {
-                    // Tambahkan class layout landscape
-                    document.body.classList.add('fullscreen-landscape');
-                    
-                    // Sembunyikan status bar / system bars di Android/iOS secara immersif
-                    if (StatusBar) {
-                        await StatusBar.hide();
-                        await StatusBar.setOverlaysWebView({ overlay: true });
-                    }
-                    
-                    // Paksa layar berputar ke landscape (Capacitor & Web API fallback)
-                    if (ScreenOrientation) {
-                        await ScreenOrientation.lock({ orientation: 'landscape' });
-                    } else if (screen.orientation && screen.orientation.lock) {
-                        await screen.orientation.lock("landscape");
-                    }
-                } else {
-                    // Hapus class layout landscape
-                    document.body.classList.remove('fullscreen-landscape');
-                    
-                    // Tampilkan kembali status bar
-                    if (StatusBar) {
-                        await StatusBar.show();
-                        await StatusBar.setOverlaysWebView({ overlay: false });
-                    }
-                    
-                    // Buka kunci orientasi
-                    if (ScreenOrientation) {
-                        await ScreenOrientation.unlock();
-                    } else if (screen.orientation && screen.orientation.unlock) {
-                        screen.orientation.unlock();
-                    }
-                }
-            } catch (err) {
-                console.log("Fullscreen change handler error:", err);
-            }
-        });
-
-        // Fitur Sticky Immersive: Jika user menggeser (swipe) navigation/status bar dari pinggir hingga muncul,
-        // otomatis sembunyikan kembali setelah beberapa saat agar tetap fullscreen
-        window.addEventListener("touchstart", function() {
-            if (document.fullscreenElement && window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
-                setTimeout(() => {
-                    window.Capacitor.Plugins.StatusBar.hide().catch(() => {});
-                }, 1500);
-            }
-        }, { passive: true });
-
         function detectAndPlay() {
             let input = document.getElementById('streamInput').value.trim();
             let playerBox = document.getElementById('player-box');
@@ -455,7 +217,6 @@
 
             playerBox.innerHTML = "";
             chatBox.innerHTML = "";
-            chatBox.style.display = "flex";
 
             if (input.includes("youtube.com") || input.includes("youtu.be")) {
                 let videoId = "";
@@ -469,8 +230,8 @@
 
                 if (videoId) {
                     let hostname = window.location.hostname || "localhost";
-                    playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&theme=dark&color=white" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-                    chatBox.innerHTML = `<iframe class="youtube-chat" src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${hostname}&dark_theme=1"></iframe>`;
+                    playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    chatBox.innerHTML = `<iframe src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${hostname}&dark_theme=true"></iframe>`;
                 } else {
                     playerBox.innerHTML = `<span style="color: red;">URL YouTube tidak valid</span>`;
                     chatBox.innerHTML = `<div class="chat-placeholder">Chat tidak tersedia</div>`;
@@ -490,13 +251,12 @@
                     width: "100%",
                     height: "100%",
                     channel: channelName,
-                    layout: "video",
+                    layout: "video", // Hanya menampilkan video player saja tanpa chat ganda di samping/bawah player
                     parent: ["localhost", "127.0.0.1", "capacitor.localhost", window.location.hostname]
                 });
 
-                // Tampilkan chat box manual untuk Twitch agar seragam
-                chatBox.style.display = "flex";
-                chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${window.location.hostname}&darkpopout" style="width:100%; height:100%;"></iframe>`;
+                let hostname = window.location.hostname || "localhost";
+                chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${hostname}&parent=localhost&parent=127.0.0.1&darkpopout"></iframe>`;
             }
         }
     </script>
