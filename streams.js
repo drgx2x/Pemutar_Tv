@@ -25,11 +25,6 @@ const myStreams = [
         type: "youtube"
     },
     { 
-        name: "Sindonews", 
-        url: "https://www.youtube.com/watch?v=L5tT1vvWhrg",
-        type: "youtube"
-    },
-    { 
         name: "Sky News", 
         url: "https://www.youtube.com/watch?v=xDWQ3LkccY8",
         type: "youtube"
