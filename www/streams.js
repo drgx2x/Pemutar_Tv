@@ -34,12 +34,17 @@ const myStreams = [
     },
     { 
         name: "Sky News", 
-        url: "https://www.youtube.com/live/xDWQ3LkccY8",
+        url: "https://www.youtube.com/watch?v=xDWQ3LkccY8",
         type: "youtube"
     },
     { 
         name: "GB News", 
-        url: "https://www.youtube.com/live/I8E6eDmhegY",
+        url: "https://www.youtube.com/watch?v=I8E6eDmhegY",
+        type: "youtube"
+    },
+    { 
+        name: "France 24 English", 
+        url: "https://www.youtube.com/watch?v=HvZt-nh9sGg",
         type: "youtube"
     },
     { name: "Fox News", url: "https://m.youtube.com/watch?v=C96oohpWBGw", type: "youtube" },
