@@ -12,6 +12,7 @@
   "dependencies": {
     "@capacitor/android": "^5.0.0",
     "@capacitor/core": "^5.0.0",
+    "@capacitor/navigation-bar": "^5.0.0",
     "@capacitor/screen-orientation": "^5.0.0",
     "@capacitor/status-bar": "^5.0.0"
   },
