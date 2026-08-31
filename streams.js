@@ -32,6 +32,16 @@ const myStreams = [
         url: "https://www.youtube.com/watch?v=L5tT1vvWhrg",
         type: "youtube"
     },
+    { 
+        name: "Live Streaming 1", 
+        url: "https://www.youtube.com/live/xDWQ3LkccY8",
+        type: "youtube"
+    },
+    { 
+        name: "Live Streaming 2", 
+        url: "https://www.youtube.com/live/I8E6eDmhegY",
+        type: "youtube"
+    },
     { name: "Fox News", url: "https://m.youtube.com/watch?v=C96oohpWBGw", type: "youtube" },
     { name: "CNN", url: "https://m.youtube.com/watch?v=GotlA1KKWoo", type: "youtube" },
     { name: "ABC News", url: "https://m.youtube.com/watch?v=uUELoBTBuFw", type: "youtube" },
