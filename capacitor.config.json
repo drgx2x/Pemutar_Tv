@@ -6,7 +6,8 @@
   "plugins": {
     "StatusBar": {
       "style": "DARK",
-      "overlaysWebView": true
+      "overlaysWebView": true,
+      "hide": true
     }
   }
 }

@@ -258,9 +258,11 @@
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
         // Paksa hide status bar saat aplikasi dimuat
-        document.addEventListener('deviceready', () => {
+        document.addEventListener('deviceready', async () => {
             if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
-                window.Capacitor.Plugins.StatusBar.hide();
+                const { StatusBar } = window.Capacitor.Plugins;
+                await StatusBar.setOverlaysWebView({ overlay: true });
+                await StatusBar.hide();
             }
         }, false);
 
@@ -406,8 +408,7 @@
         // Deteksi perubahan fullscreen untuk layout landscape & menyembunyikan StatusBar/System Bars
         document.addEventListener("fullscreenchange", async function() {
             try {
-                const ScreenOrientation = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.ScreenOrientation;
-                const StatusBar = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar;
+                const { StatusBar, ScreenOrientation } = window.Capacitor.Plugins;
 
                 if (document.fullscreenElement) {
                     // Tambahkan class layout landscape
@@ -415,9 +416,8 @@
                     
                     // Sembunyikan status bar / system bars di Android/iOS
                     if (StatusBar) {
+                        await StatusBar.setOverlaysWebView({ overlay: true });
                         await StatusBar.hide();
-                        // Delay tambahan untuk memastikan Android benar-benar menyembunyikan navigation bar
-                        setTimeout(async () => { await StatusBar.hide(); }, 500);
                     }
                     
                     // Paksa layar berputar ke landscape
@@ -450,10 +450,8 @@
         // Fitur Sticky Immersive: Jika user menggeser (swipe) navigation/status bar dari pinggir hingga muncul,
         // otomatis sembunyikan kembali setelah beberapa saat agar tetap fullscreen
         window.addEventListener("touchstart", function() {
-            if (document.fullscreenElement && window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
-                setTimeout(async () => {
-                    await window.Capacitor.Plugins.StatusBar.hide();
-                }, 1000);
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
+                window.Capacitor.Plugins.StatusBar.hide();
             }
         }, { passive: true });
 
