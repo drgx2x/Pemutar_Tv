@@ -4,7 +4,6 @@
     { "name": "KOMPAS TV", "url": "https://www.youtube.com/watch?v=DOOrIxw5xOw", "type": "youtube" },
     { "name": "tvOne", "url": "https://www.youtube.com/watch?v=rQJoEpzKkNk", "type": "youtube" },
     { "name": "Official iNews", "url": "https://www.youtube.com/watch?v=WHTPYAvakTg", "type": "youtube" },
-    { "name": "Sindonews", "url": "https://www.youtube.com/watch?v=L5tT1vvWhrg", "type": "youtube" },
     { "name": "Sky News", "url": "https://www.youtube.com/watch?v=xDWQ3LkccY8", "type": "youtube" },
     { "name": "GB News", "url": "https://www.youtube.com/watch?v=I8E6eDmhegY", "type": "youtube" },
     { "name": "France 24 English", "url": "https://www.youtube.com/watch?v=HvZt-nh9sGg", "type": "youtube" },
