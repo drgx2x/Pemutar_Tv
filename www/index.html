@@ -260,15 +260,15 @@
         // Paksa hide status bar dan navigation bar saat aplikasi dimuat
         document.addEventListener('deviceready', async () => {
             if (window.Capacitor && window.Capacitor.Plugins) {
-                const { StatusBar, NavigationBar } = window.Capacitor.Plugins;
+                const { StatusBar } = window.Capacitor.Plugins;
                 
                 if (StatusBar) {
                     await StatusBar.setOverlaysWebView({ overlay: true });
                     await StatusBar.hide();
                 }
                 
-                if (NavigationBar) {
-                    await NavigationBar.hide();
+                if (window.NavigationBar) {
+                    await window.NavigationBar.hide();
                 }
             }
         }, false);
@@ -415,7 +415,7 @@
         // Deteksi perubahan fullscreen untuk layout landscape & menyembunyikan StatusBar/System Bars
         document.addEventListener("fullscreenchange", async function() {
             try {
-                const { StatusBar, NavigationBar, ScreenOrientation } = window.Capacitor.Plugins;
+                const { StatusBar, ScreenOrientation } = window.Capacitor.Plugins;
 
                 if (document.fullscreenElement) {
                     // Tambahkan class layout landscape
@@ -426,8 +426,8 @@
                         await StatusBar.setOverlaysWebView({ overlay: true });
                         await StatusBar.hide();
                     }
-                    if (NavigationBar) {
-                        await NavigationBar.hide();
+                    if (window.NavigationBar) {
+                        await window.NavigationBar.hide();
                     }
                     
                     // Paksa layar berputar ke landscape
@@ -444,8 +444,8 @@
                     if (StatusBar) {
                         await StatusBar.show();
                     }
-                    if (NavigationBar) {
-                        await NavigationBar.show();
+                    if (window.NavigationBar) {
+                        await window.NavigationBar.show();
                     }
                     
                     // Buka kunci orientasi
@@ -464,9 +464,9 @@
         // otomatis sembunyikan kembali
         window.addEventListener("touchstart", function() {
             if (window.Capacitor && window.Capacitor.Plugins) {
-                const { StatusBar, NavigationBar } = window.Capacitor.Plugins;
+                const { StatusBar } = window.Capacitor.Plugins;
                 if (StatusBar) StatusBar.hide();
-                if (NavigationBar) NavigationBar.hide();
+                if (window.NavigationBar) window.NavigationBar.hide();
             }
         }, { passive: true });
 
