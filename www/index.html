@@ -435,6 +435,16 @@
             }
         });
 
+        // Fitur Sticky Immersive: Jika user menggeser (swipe) navigation/status bar dari pinggir hingga muncul,
+        // otomatis sembunyikan kembali setelah beberapa saat agar tetap fullscreen
+        window.addEventListener("touchstart", function() {
+            if (document.fullscreenElement && window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
+                setTimeout(() => {
+                    window.Capacitor.Plugins.StatusBar.hide().catch(() => {});
+                }, 1500);
+            }
+        }, { passive: true });
+
         function detectAndPlay() {
             let input = document.getElementById('streamInput').value.trim();
             let playerBox = document.getElementById('player-box');
