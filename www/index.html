@@ -254,8 +254,11 @@
     <!-- Load streams via Fetch API agar selalu update dari GitHub -->
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
+        // Variabel global untuk menampung data stream
         let myStreams = [];
-        async function loadStreams() {
+
+        // Fungsi untuk mengambil data dari GitHub
+        async function fetchStreams() {
             try {
                 const url = 'https://raw.githubusercontent.com/drgx2x/Pemutar_Twitch/main/www/streams.js?t=' + new Date().getTime();
                 console.log("Mencoba memuat playlist dari:", url);
@@ -265,20 +268,18 @@
                     throw new Error('Network response was not ok: ' + response.status);
                 }
                 
-                // Sekarang langsung gunakan response.json()
                 myStreams = await response.json();
-                
                 console.log("Playlist berhasil dimuat!");
             } catch (error) {
                 console.error("Gagal memuat playlist:", error);
                 myStreams = []; // Fallback jika gagal
             }
         }
+
         // Jalankan saat aplikasi dibuka
-        loadStreams();
-    </script>
-    <script>
-        let myStreams = [];
+        fetchStreams();
+
+        // Fungsi untuk menampilkan playlist ke modal
         async function loadStreams() {
             let container = document.getElementById('playlist-container');
             if (typeof myStreams === 'undefined' || !myStreams || myStreams.length === 0) {
@@ -305,7 +306,7 @@
 
         function openPlaylist() {
             document.getElementById('playlist-modal').style.display = 'flex';
-            renderPlaylist();
+            loadStreams();
         }
 
         function closePlaylist() {
@@ -318,7 +319,6 @@
             }
         }
 
-        let sleepTimerId = null;
         let sleepCountdownInterval = null;
         let remainingSeconds = 0;
 
@@ -394,19 +394,35 @@
         }
 
         // Deteksi perubahan fullscreen untuk layout landscape
-        document.addEventListener("fullscreenchange", function() {
-            if (document.fullscreenElement) {
-                // Tambahkan class layout landscape
-                document.body.classList.add('fullscreen-landscape');
-                
-                // Paksa layar berputar ke landscape (Web API & Capacitor fallback)
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(function(error) {
-                        console.log("Gagal mengunci orientasi:", error);
-                    });
+        document.addEventListener("fullscreenchange", async function() {
+            try {
+                const ScreenOrientation = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.ScreenOrientation;
+
+                if (document.fullscreenElement) {
+                    // Tambahkan class layout landscape
+                    document.body.classList.add('fullscreen-landscape');
+                    
+                    // Paksa layar berputar ke landscape (Capacitor & Web API fallback)
+                    if (ScreenOrientation) {
+                        await ScreenOrientation.lock({ orientation: 'landscape' });
+                    } else if (screen.orientation && screen.orientation.lock) {
+                        await screen.orientation.lock("landscape");
+                    }
+                } else {
+                    // Hapus class layout landscape
+                    document.body.classList.remove('fullscreen-landscape');
+                    
+                    // Buka kunci orientasi
+                    if (ScreenOrientation) {
+                        await ScreenOrientation.unlock();
+                    } else if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    }
                 }
-            } else {
-                // Hapus class layout landscape
+            } catch (err) {
+                console.log("Screen orientation lock error:", err);
+            }
+        });lass layout landscape
                 document.body.classList.remove('fullscreen-landscape');
                 
                 // Kembalikan orientasi layar ke bebas/normal
