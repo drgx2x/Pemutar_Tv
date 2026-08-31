@@ -393,14 +393,20 @@
             cancelSleepTimer();
         }
 
-        // Deteksi perubahan fullscreen untuk layout landscape
+        // Deteksi perubahan fullscreen untuk layout landscape & menyembunyikan StatusBar/System Bars
         document.addEventListener("fullscreenchange", async function() {
             try {
                 const ScreenOrientation = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.ScreenOrientation;
+                const StatusBar = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar;
 
                 if (document.fullscreenElement) {
                     // Tambahkan class layout landscape
                     document.body.classList.add('fullscreen-landscape');
+                    
+                    // Sembunyikan status bar / system bars di Android/iOS
+                    if (StatusBar) {
+                        await StatusBar.hide();
+                    }
                     
                     // Paksa layar berputar ke landscape (Capacitor & Web API fallback)
                     if (ScreenOrientation) {
@@ -412,6 +418,11 @@
                     // Hapus class layout landscape
                     document.body.classList.remove('fullscreen-landscape');
                     
+                    // Tampilkan kembali status bar
+                    if (StatusBar) {
+                        await StatusBar.show();
+                    }
+                    
                     // Buka kunci orientasi
                     if (ScreenOrientation) {
                         await ScreenOrientation.unlock();
@@ -420,7 +431,7 @@
                     }
                 }
             } catch (err) {
-                console.log("Screen orientation lock error:", err);
+                console.log("Fullscreen change handler error:", err);
             }
         });
 
