@@ -15,6 +15,8 @@
     { "name": "TalkTV", "url": "https://www.youtube.com/watch?v=DFYaNjzI1aI", "type": "youtube" },
     { "name": "TalkSports", "url": "https://www.youtube.com/watch?v=uLWEssCrXYc", "type": "youtube" },
     { "name": "MSMojo", "url": "https://www.youtube.com/watch?v=9gtxyOwIBxs", "type": "youtube" },
+    { "name": "WatchMojo Top 10", "url": "https://www.youtube.com/watch?v=AHa_Uz50sJk", "type": "youtube" },
+    { "name": "WatchMojo True Crime", "url": "https://www.youtube.com/watch?v=AHa_Uz50sJk", "type": "youtube" },
     { "name": "Rifftrax", "url": "https://m.twitch.tv/rifftrax", "type": "twitch" },
     { "name": "Lofi Girl", "url": "https://www.twitch.tv/lofigirl", "type": "twitch" },
     { "name": "Leekbeats", "url": "https://www.twitch.tv/leekbeats", "type": "twitch" },
