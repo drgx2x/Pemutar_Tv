@@ -259,22 +259,6 @@
     <!-- Load streams via Fetch API agar selalu update dari GitHub -->
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
-        // Paksa tampilkan status bar saat aplikasi dimuat
-        document.addEventListener('deviceready', async () => {
-            if (window.Capacitor && window.Capacitor.Plugins) {
-                const { StatusBar } = window.Capacitor.Plugins;
-                
-                if (StatusBar) {
-                    // overlay: true agar status bar tetap ada di atas konten
-                    await StatusBar.setOverlaysWebView({ overlay: true }); 
-                    // Pastikan status bar selalu tampil
-                    await StatusBar.show();
-                    // Atur gaya status bar
-                    await StatusBar.setStyle({ style: 'DARK' });
-                }
-            }
-        }, false);
-
         // Variabel global untuk menampung data stream
         let myStreams = [];
 
@@ -414,20 +398,14 @@
             cancelSleepTimer();
         }
 
-        // Deteksi perubahan fullscreen untuk layout landscape & menyembunyikan StatusBar
+        // Deteksi perubahan fullscreen untuk layout landscape
         document.addEventListener("fullscreenchange", async function() {
             try {
-                const { StatusBar, ScreenOrientation } = window.Capacitor.Plugins;
+                const { ScreenOrientation } = window.Capacitor.Plugins;
 
                 if (document.fullscreenElement) {
                     // Tambahkan class layout landscape
                     document.body.classList.add('fullscreen-landscape');
-                    
-                    // Sembunyikan status bar di Android
-                    if (StatusBar) {
-                        await StatusBar.setOverlaysWebView({ overlay: true });
-                        await StatusBar.hide();
-                    }
                     
                     // Paksa layar berputar ke landscape
                     if (ScreenOrientation) {
@@ -438,11 +416,6 @@
                 } else {
                     // Hapus class layout landscape
                     document.body.classList.remove('fullscreen-landscape');
-                    
-                    // Tampilkan kembali status bar
-                    if (StatusBar) {
-                        await StatusBar.show();
-                    }
                     
                     // Buka kunci orientasi
                     if (ScreenOrientation) {
@@ -456,14 +429,7 @@
             }
         });
 
-        // Fitur Sticky Immersive: Jika user menggeser (swipe) status bar dari pinggir hingga muncul,
-        // otomatis sembunyikan kembali
-        window.addEventListener("touchstart", function() {
-            if (window.Capacitor && window.Capacitor.Plugins) {
-                const { StatusBar } = window.Capacitor.Plugins;
-                if (StatusBar) StatusBar.hide();
-            }
-        }, { passive: true });
+        // Fitur Sticky Immersive: Hapus listener touchstart yang mengganggu
 
         function detectAndPlay() {
             let input = document.getElementById('streamInput').value.trim();
