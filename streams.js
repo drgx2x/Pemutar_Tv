@@ -33,12 +33,12 @@ const myStreams = [
         type: "youtube"
     },
     { 
-        name: "Live Streaming 1", 
+        name: "Sky News", 
         url: "https://www.youtube.com/live/xDWQ3LkccY8",
         type: "youtube"
     },
     { 
-        name: "Live Streaming 2", 
+        name: "GB News", 
         url: "https://www.youtube.com/live/I8E6eDmhegY",
         type: "youtube"
     },
