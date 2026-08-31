@@ -257,6 +257,13 @@
     <!-- Load streams via Fetch API agar selalu update dari GitHub -->
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
+        // Paksa hide status bar saat aplikasi dimuat
+        document.addEventListener('deviceready', () => {
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
+                window.Capacitor.Plugins.StatusBar.hide();
+            }
+        }, false);
+
         // Variabel global untuk menampung data stream
         let myStreams = [];
 

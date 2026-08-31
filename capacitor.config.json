@@ -2,5 +2,11 @@
   "appId": "com.videoplayer.app",
   "appName": "Pemutar Video",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "plugins": {
+    "StatusBar": {
+      "style": "DARK",
+      "overlaysWebView": true
+    }
+  }
 }
