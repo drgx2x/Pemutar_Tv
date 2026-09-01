@@ -247,16 +247,22 @@
                 twitchEmbedDiv.id = 'twitch-embed';
                 playerBox.appendChild(twitchEmbedDiv);
 
+                // Ambil daftar parent yang aman untuk Twitch
+                let parents = ["localhost", "127.0.0.1", "capacitor.localhost", "app.localhost"];
+                if (window.location.hostname && !parents.includes(window.location.hostname)) {
+                    parents.push(window.location.hostname);
+                }
+
                 new Twitch.Embed("twitch-embed", {
                     width: "100%",
                     height: "100%",
                     channel: channelName,
-                    layout: "video", // Hanya menampilkan video player saja tanpa chat ganda di samping/bawah player
-                    parent: ["localhost", "127.0.0.1", "capacitor.localhost", window.location.hostname]
+                    layout: "video",
+                    parent: parents
                 });
 
-                let hostname = window.location.hostname || "localhost";
-                chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${hostname}&parent=localhost&parent=127.0.0.1&darkpopout"></iframe>`;
+                let chatHostname = window.location.hostname && window.location.hostname !== "" ? window.location.hostname : "localhost";
+                chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${chatHostname}&parent=localhost&parent=127.0.0.1&parent=capacitor.localhost&darkpopout"></iframe>`;
             }
         }
     </script>
