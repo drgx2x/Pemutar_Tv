@@ -14,6 +14,7 @@
     { "name": "Fox News", "url": "https://www.youtube.com/watch?v=C96oohpWBGw", "type": "youtube" },
     { "name": "Bloomberg", "url": "https://www.youtube.com/watch?v=QB5BNdBFujE", "type": "youtube" },
     { "name": "Yahoo Finance", "url": "https://www.youtube.com/watch?v=KQp-e_XQnDE", "type": "youtube" },
+    { "name": "Schwab Network", "url": "https://www.youtube.com/watch?v=3etkI14QncQ", "type": "youtube" },
     { "name": "TalkTV", "url": "https://www.youtube.com/watch?v=DFYaNjzI1aI", "type": "youtube" },
     { "name": "TalkSports", "url": "https://www.youtube.com/watch?v=uLWEssCrXYc", "type": "youtube" },
     { "name": "MSMojo", "url": "https://www.youtube.com/watch?v=9gtxyOwIBxs", "type": "youtube" },
