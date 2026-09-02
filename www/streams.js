@@ -28,5 +28,7 @@
     { "name": "RetroCrush", "url": "https://www.twitch.tv/retrocrush_tv", "type": "twitch" },
     { "name": "FailArmy", "url": "https://www.twitch.tv/failarmy", "type": "twitch" },
     { "name": "The Asylum", "url": "https://www.twitch.tv/theasylummovies", "type": "twitch" },
-    { "name": "Tokyo Street View", "url": "https://www.twitch.tv/tokyostreetview", "type": "twitch" }
+    { "name": "Tokyo Street View", "url": "https://www.twitch.tv/tokyostreetview", "type": "twitch" },
+    { "name": "Eslcs", "url": "https://www.twitch.tv/eslcs", "type": "twitch" },
+    { "name": "Blastpremier", "url": "https://www.twitch.tv/blastpremier", "type": "twitch" }
 ]
