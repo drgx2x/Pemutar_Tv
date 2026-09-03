@@ -40,6 +40,20 @@
         }
         .playlist-btn:hover { background: #3a3a3a; }
 
+        .sleep-btn { 
+            background: #2a2a2a; 
+            color: white; 
+            border: 1px solid #444; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 13px; 
+            font-weight: bold; 
+            flex-shrink: 0;
+        }
+        .sleep-btn:hover { background: #3a3a3a; }
+        .sleep-btn.active { background: #d9534f; border-color: #d9534f; }
+
         input { 
             flex-grow: 1; 
             padding: 8px 10px; 
@@ -124,6 +138,7 @@
 
     <div class="top-bar">
         <button class="playlist-btn" onclick="openPlaylist()">≡ List</button>
+        <button class="sleep-btn" id="sleepBtn" onclick="openSleepModal()">💤 Sleep</button>
         <input type="text" id="streamInput" placeholder="URL / Channel">
         <button class="play-btn" onclick="detectAndPlay()">Putar</button>
     </div>
@@ -146,6 +161,28 @@
             </div>
             <div id="playlist-container">
                 <p style="color: #888; text-align: center;">Memuat playlist...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sleep Timer -->
+    <div id="sleep-modal" onclick="closeSleepOutside(event)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 style="margin: 0;">Sleep Timer</h4>
+                <button class="close-btn" onclick="closeSleepModal()">✕</button>
+            </div>
+            <div style="padding: 10px 0;">
+                <p id="sleep-status" style="font-size: 13px; color: #aaa; margin-top: 0; margin-bottom: 12px; text-align: center;">Timer tidak aktif</p>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+                    <button onclick="setSleepTimer(15)" style="padding: 10px; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold;">15m</button>
+                    <button onclick="setSleepTimer(30)" style="padding: 10px; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold;">30m</button>
+                    <button onclick="setSleepTimer(45)" style="padding: 10px; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold;">45m</button>
+                    <button onclick="setSleepTimer(60)" style="padding: 10px; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold;">60m</button>
+                    <button onclick="setSleepTimer(90)" style="padding: 10px; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold;">90m</button>
+                    <button onclick="setSleepTimer(120)" style="padding: 10px; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold;">120m</button>
+                </div>
+                <button onclick="cancelSleepTimer()" style="width: 100%; padding: 10px; background: #d9534f; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Matikan Timer</button>
             </div>
         </div>
     </div>
@@ -264,6 +301,83 @@
                 let chatHostname = window.location.hostname && window.location.hostname !== "" ? window.location.hostname : "localhost";
                 chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${chatHostname}&parent=localhost&parent=127.0.0.1&parent=capacitor.localhost&darkpopout"></iframe>`;
             }
+        }
+
+        // --- Sleep Timer Logic ---
+        let sleepTimerId = null;
+        let sleepCountdownId = null;
+        let sleepTimeRemaining = 0;
+
+        function openSleepModal() {
+            document.getElementById('sleep-modal').style.display = 'flex';
+            updateSleepStatusUI();
+        }
+
+        function closeSleepModal() {
+            document.getElementById('sleep-modal').style.display = 'none';
+        }
+
+        function closeSleepOutside(event) {
+            if (event.target.id === 'sleep-modal') {
+                closeSleepModal();
+            }
+        }
+
+        function setSleepTimer(minutes) {
+            cancelSleepTimer();
+            sleepTimeRemaining = minutes * 60;
+            
+            let btn = document.getElementById('sleepBtn');
+            btn.classList.add('active');
+
+            sleepCountdownId = setInterval(() => {
+                sleepTimeRemaining--;
+                updateSleepStatusUI();
+                if (sleepTimeRemaining <= 0) {
+                    triggerSleep();
+                }
+            }, 1000);
+
+            updateSleepStatusUI();
+            closeSleepModal();
+        }
+
+        function cancelSleepTimer() {
+            if (sleepCountdownId) {
+                clearInterval(sleepCountdownId);
+                sleepCountdownId = null;
+            }
+            sleepTimeRemaining = 0;
+            let btn = document.getElementById('sleepBtn');
+            btn.classList.remove('active');
+            updateSleepStatusUI();
+        }
+
+        function updateSleepStatusUI() {
+            let statusEl = document.getElementById('sleep-status');
+            if (!statusEl) return;
+
+            if (sleepTimeRemaining > 0) {
+                let m = Math.floor(sleepTimeRemaining / 60);
+                let s = sleepTimeRemaining % 60;
+                statusEl.innerText = `Timer aktif: Sisa waktu ${m}m ${s < 10 ? '0' : ''}${s}s`;
+                statusEl.style.color = '#4ea8de';
+            } else {
+                statusEl.innerText = "Timer tidak aktif";
+                statusEl.style.color = '#aaa';
+            }
+        }
+
+        function triggerSleep() {
+            cancelSleepTimer();
+            // Matikan player dan chat dengan mengosongkan elemennya
+            let playerBox = document.getElementById('player-box');
+            let chatBox = document.getElementById('chat-box');
+            
+            playerBox.innerHTML = `<span style="color: #777; font-size: 13px;">Stream dihentikan oleh Sleep Timer</span>`;
+            chatBox.innerHTML = `<div class="chat-placeholder">Sleep Timer Berakhir</div>`;
+            
+            closeSleepModal();
         }
     </script>
 </body>
