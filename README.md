@@ -12,7 +12,11 @@ Aplikasi web pemutar streaming multi-platform (YouTube & Twitch) yang dirancang 
 - **Sleep Timer**: Fitur pengatur waktu tidur otomatis (15m, 30m, 45m, 60m, atau waktu manual) yang akan menghentikan pemutaran stream saat waktu habis.
 - **Auto Fullscreen & Landscape Lock**: Otomatis menyesuaikan orientasi layar saat mode fullscreen diaktifkan pada perangkat yang mendukung.
 
-## Cara Penggunaan
+## Cara Akses Web (Live Demo)
+
+Aplikasi ini di-deploy secara otomatis menggunakan GitHub Pages. Anda dapat langsung mengaksesnya melalui tautan berikut:
+- **URL Web**: [https://drgx2x.github.io/Pemutar_Tv/](https://drgx2x.github.io/Pemutar_Tv/)
+
 
 1. Buka aplikasi melalui browser.
 2. Masukkan URL YouTube/Twitch atau nama channel pada kolom input, lalu klik **Putar**.
