@@ -7,11 +7,12 @@ on:
   # Memungkinkan Anda menjalankan workflow ini secara manual dari tab Actions
   workflow_dispatch:
 
-# Mengatur izin untuk GITHUB_TOKEN agar bisa melakukan deployment ke GitHub Pages
+# Mengatur izin untuk GITHUB_TOKEN agar bisa melakukan deployment ke GitHub Pages dan menghapus riwayat lama
 permissions:
   contents: read
   pages: write
   id-token: write
+  deployments: write
 
 # Hanya mengizinkan satu deployment bersamaan, melewati deployment antrean yang belum selesai
 concurrency:
@@ -45,12 +46,11 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     permissions:
-      actions: write
+      deployments: write
     steps:
-      - name: Delete old workflow runs
-        uses: Mattraks/delete-workflow-runs@v2
+      - name: Clean up old inactive deployments
+        uses: strumwolf/delete-deployment-environment@v3
         with:
-          token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          retain_days: 0
-          keep_minimum_runs: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: github-pages
+          onlyRemoveDeployments: true
