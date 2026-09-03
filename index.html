@@ -132,6 +132,51 @@
         .playlist-item:hover { background: #3a3a3a; }
         .playlist-title { font-size: 14px; font-weight: bold; }
         .playlist-type { font-size: 11px; background: #9146FF; padding: 2px 6px; border-radius: 3px; }
+
+        /* Dropdown Menu untuk Aksi Playlist */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropbtn {
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            padding: 4px 8px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .dropbtn:hover { background: #444; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #252525;
+            min-width: 120px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.4);
+            z-index: 1020;
+            border-radius: 6px;
+            border: 1px solid #444;
+            overflow: hidden;
+        }
+        .dropdown-content button {
+            color: #fff;
+            padding: 8px 12px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .dropdown-content button:hover { background-color: #333; }
+        .dropdown-content button.danger { color: #ff6b6b; }
+        .dropdown-content button.danger:hover { background-color: #4a2525; }
+        .dropdown.show .dropdown-content { display: block; }
     </style>
 </head>
 <body>
@@ -169,7 +214,7 @@
     </div>
 
     <!-- Sub-Modal Add/Edit Playlist -->
-    <div id="playlist-form-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1010; align-items: center; justify-content: center;">
+    <div id="playlist-form-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1050; align-items: center; justify-content: center;">
         <div class="modal-content" style="max-width: 350px;">
             <div class="modal-header">
                 <h4 id="playlist-form-title" style="margin: 0;">Tambah Playlist</h4>
@@ -224,11 +269,9 @@
         </div>
     </div>
 
-    <!-- Load streams.js directly as a script so myStreams is defined natively without fetch/CORS/parsing issues -->
     <script src="streams.js"></script>
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <script>
-        // Otomatis ubah orientasi ke landscape saat masuk mode fullscreen di browser HP
         document.addEventListener("fullscreenchange", function() {
             if (document.fullscreenElement) {
                 if (screen.orientation && screen.orientation.lock) {
@@ -242,6 +285,19 @@
                 }
             }
         });
+
+        // Tutup dropdown jika klik di luar
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                let dropdowns = document.getElementsByClassName("dropdown-content");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    let openDropdown = dropdowns[i];
+                    if (openDropdown.parentElement.classList.contains('show')) {
+                        openDropdown.parentElement.classList.remove('show');
+                    }
+                }
+            }
+        }
 
         function renderPlaylist() {
             let container = document.getElementById('playlist-container');
@@ -275,50 +331,62 @@
                     closePlaylist();
                 };
 
-                let btnGroup = document.createElement('div');
-                btnGroup.style.display = 'flex';
-                btnGroup.style.gap = '4px';
-                btnGroup.style.alignItems = 'center';
+                // Wrapper Dropdown Tunggal (1 Tombol Menu)
+                let dropdownDiv = document.createElement('div');
+                dropdownDiv.className = 'dropdown';
 
-                // Tombol Pindah Atas
+                let dropBtn = document.createElement('button');
+                dropBtn.className = 'dropbtn';
+                dropBtn.innerHTML = '⋮';
+                dropBtn.title = 'Menu Aksi';
+                dropBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    // Tutup dropdown lain terlebih dahulu
+                    let allDropdowns = document.getElementsByClassName('dropdown');
+                    for (let d of allDropdowns) {
+                        if (d !== dropdownDiv) d.classList.remove('show');
+                    }
+                    dropdownDiv.classList.toggle('show');
+                };
+
+                let dropdownContent = document.createElement('div');
+                dropdownContent.className = 'dropdown-content';
+
+                // Pindah Atas
                 let upBtn = document.createElement('button');
-                upBtn.innerHTML = '▲';
-                upBtn.title = 'Pindah ke atas';
-                upBtn.style.cssText = 'background: #333; color: #fff; border: 1px solid #555; border-radius: 3px; padding: 3px 6px; cursor: pointer; font-size: 11px;';
+                upBtn.innerHTML = '▲ Pindah Atas';
                 upBtn.disabled = index === 0;
                 if (index === 0) upBtn.style.opacity = '0.3';
                 upBtn.onclick = (e) => { e.stopPropagation(); movePlaylist(index, -1); };
 
-                // Tombol Pindah Bawah
+                // Pindah Bawah
                 let downBtn = document.createElement('button');
-                downBtn.innerHTML = '▼';
-                downBtn.title = 'Pindah ke bawah';
-                downBtn.style.cssText = 'background: #333; color: #fff; border: 1px solid #555; border-radius: 3px; padding: 3px 6px; cursor: pointer; font-size: 11px;';
+                downBtn.innerHTML = '▼ Pindah Bawah';
                 downBtn.disabled = index === myStreams.length - 1;
                 if (index === myStreams.length - 1) downBtn.style.opacity = '0.3';
                 downBtn.onclick = (e) => { e.stopPropagation(); movePlaylist(index, 1); };
 
-                // Tombol Edit
+                // Edit
                 let editBtn = document.createElement('button');
-                editBtn.innerHTML = '✎';
-                editBtn.title = 'Edit';
-                editBtn.style.cssText = 'background: #3a86ff; color: #fff; border: none; border-radius: 3px; padding: 3px 6px; cursor: pointer; font-size: 11px;';
+                editBtn.innerHTML = '✎ Edit';
                 editBtn.onclick = (e) => { e.stopPropagation(); openEditPlaylistModal(index); };
 
-                // Tombol Hapus
+                // Hapus
                 let delBtn = document.createElement('button');
-                delBtn.innerHTML = '✕';
-                delBtn.title = 'Hapus';
-                delBtn.style.cssText = 'background: #d9534f; color: #fff; border: none; border-radius: 3px; padding: 3px 6px; cursor: pointer; font-size: 11px;';
+                delBtn.className = 'danger';
+                delBtn.innerHTML = '✕ Hapus';
                 delBtn.onclick = (e) => { e.stopPropagation(); deletePlaylist(index); };
 
-                btnGroup.appendChild(upBtn);
-                btnGroup.appendChild(downBtn);
-                btnGroup.appendChild(editBtn);
-                btnGroup.appendChild(delBtn);
+                dropdownContent.appendChild(upBtn);
+                dropdownContent.appendChild(downBtn);
+                dropdownContent.appendChild(editBtn);
+                dropdownContent.appendChild(delBtn);
+
+                dropdownDiv.appendChild(dropBtn);
+                dropdownDiv.appendChild(dropdownContent);
 
                 div.appendChild(infoDiv);
-                div.appendChild(btnGroup);
+                div.appendChild(dropdownDiv);
                 container.appendChild(div);
             });
         }
@@ -437,7 +505,6 @@
                 twitchEmbedDiv.id = 'twitch-embed';
                 playerBox.appendChild(twitchEmbedDiv);
 
-                // Ambil daftar parent yang aman untuk Twitch
                 let parents = ["localhost", "127.0.0.1", "capacitor.localhost", "app.localhost"];
                 if (window.location.hostname && !parents.includes(window.location.hostname)) {
                     parents.push(window.location.hostname);
@@ -457,7 +524,6 @@
         }
 
         // --- Sleep Timer Logic ---
-        let sleepTimerId = null;
         let sleepCountdownId = null;
         let sleepTimeRemaining = 0;
 
@@ -534,7 +600,6 @@
 
         function triggerSleep() {
             cancelSleepTimer();
-            // Matikan player dan chat dengan mengosongkan elemennya
             let playerBox = document.getElementById('player-box');
             let chatBox = document.getElementById('chat-box');
             
