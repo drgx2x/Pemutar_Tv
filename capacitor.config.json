@@ -1,8 +1,0 @@
-{
-  "appId": "com.videoplayer.app",
-  "appName": "Pemutar Video",
-  "webDir": "www",
-  "bundledWebRuntime": false,
-  "plugins": {
-  }
-}
