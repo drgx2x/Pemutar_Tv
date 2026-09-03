@@ -204,7 +204,8 @@
                 <h4 style="margin: 0;">Daftar Playlist</h4>
                 <button class="close-btn" onclick="closePlaylist()">✕</button>
             </div>
-            <div style="margin-bottom: 12px; display: flex; justify-content: flex-end;">
+            <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <button onclick="exportStreamsJS()" style="background: #2b9348; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold;">📥 Export streams.js</button>
                 <button onclick="openAddPlaylistModal()" style="background: #9146FF; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold;">+ Tambah Playlist</button>
             </div>
             <div id="playlist-container" style="max-height: 60vh; overflow-y: auto;">
@@ -393,6 +394,26 @@
 
         let editingPlaylistIndex = null;
 
+        // Load playlist dari localStorage jika ada
+        function initPlaylistStorage() {
+            let saved = localStorage.getItem('myCustomStreams');
+            if (saved) {
+                try {
+                    let parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        window.myStreams = parsed;
+                    }
+                } catch (e) {
+                    console.error("Gagal parse localStorage streams:", e);
+                }
+            }
+        }
+        initPlaylistStorage();
+
+        function saveStreamsToStorage() {
+            localStorage.setItem('myCustomStreams', JSON.stringify(window.myStreams));
+        }
+
         function openAddPlaylistModal() {
             editingPlaylistIndex = null;
             document.getElementById('playlist-form-title').innerText = 'Tambah Playlist';
@@ -432,6 +453,7 @@
                 myStreams[editingPlaylistIndex] = { name, url, type };
             }
 
+            saveStreamsToStorage();
             closePlaylistFormModal();
             renderPlaylist();
         }
@@ -439,6 +461,7 @@
         function deletePlaylist(index) {
             if (confirm(`Hapus "${myStreams[index].name}" dari playlist?`)) {
                 myStreams.splice(index, 1);
+                saveStreamsToStorage();
                 renderPlaylist();
             }
         }
@@ -449,7 +472,20 @@
             let temp = myStreams[index];
             myStreams[index] = myStreams[newIndex];
             myStreams[newIndex] = temp;
+            saveStreamsToStorage();
             renderPlaylist();
+        }
+
+        function exportStreamsJS() {
+            let fileContent = "const myStreams = " + JSON.stringify(myStreams, null, 4) + ";\n";
+            let blob = new Blob([fileContent], { type: 'text/javascript;charset=utf-8;' });
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'streams.js';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function openPlaylist() {
