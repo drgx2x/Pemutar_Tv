@@ -154,13 +154,47 @@
 
     <!-- Modal Playlist -->
     <div id="playlist-modal" onclick="closePlaylistOutside(event)">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 450px;">
             <div class="modal-header">
                 <h4 style="margin: 0;">Daftar Playlist</h4>
                 <button class="close-btn" onclick="closePlaylist()">✕</button>
             </div>
-            <div id="playlist-container">
+            <div style="margin-bottom: 12px; display: flex; justify-content: flex-end;">
+                <button onclick="openAddPlaylistModal()" style="background: #9146FF; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold;">+ Tambah Playlist</button>
+            </div>
+            <div id="playlist-container" style="max-height: 60vh; overflow-y: auto;">
                 <p style="color: #888; text-align: center;">Memuat playlist...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sub-Modal Add/Edit Playlist -->
+    <div id="playlist-form-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1010; align-items: center; justify-content: center;">
+        <div class="modal-content" style="max-width: 350px;">
+            <div class="modal-header">
+                <h4 id="playlist-form-title" style="margin: 0;">Tambah Playlist</h4>
+                <button class="close-btn" onclick="closePlaylistFormModal()">✕</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; padding: 5px 0;">
+                <div>
+                    <label style="font-size: 11px; color: #aaa; display: block; margin-bottom: 4px;">Nama Channel / Acara</label>
+                    <input type="text" id="plEditName" placeholder="Contoh: Kompas TV" style="width: 100%; box-sizing: border-box;">
+                </div>
+                <div>
+                    <label style="font-size: 11px; color: #aaa; display: block; margin-bottom: 4px;">URL atau Nama Channel</label>
+                    <input type="text" id="plEditUrl" placeholder="https://youtube.com/... atau channel" style="width: 100%; box-sizing: border-box;">
+                </div>
+                <div>
+                    <label style="font-size: 11px; color: #aaa; display: block; margin-bottom: 4px;">Tipe</label>
+                    <select id="plEditType" style="width: 100%; padding: 8px 10px; font-size: 13px; background: #1e1e1e; color: #fff; border-radius: 6px; border: 1px solid #444; outline: none; box-sizing: border-box;">
+                        <option value="youtube">YouTube</option>
+                        <option value="twitch">Twitch</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button onclick="savePlaylistEntry()" style="flex: 1; background: #9146FF; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold;">Simpan</button>
+                    <button onclick="closePlaylistFormModal()" style="background: #444; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">Batal</button>
+                </div>
             </div>
         </div>
     </div>
@@ -211,27 +245,143 @@
 
         function renderPlaylist() {
             let container = document.getElementById('playlist-container');
-            // Check if myStreams is available globally from streams.js
             if (typeof myStreams === 'undefined' || !myStreams || myStreams.length === 0) {
                 container.innerHTML = '<p style="color: #ff5555; text-align: center;">Playlist kosong atau streams.js gagal dimuat.</p>';
                 return;
             }
 
             container.innerHTML = "";
-            myStreams.forEach(item => {
+            myStreams.forEach((item, index) => {
                 let div = document.createElement('div');
                 div.className = 'playlist-item';
-                div.innerHTML = `
-                    <span class="playlist-title">${item.name}</span>
-                    <span class="playlist-type">${(item.type || 'stream').toUpperCase()}</span>
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.alignItems = 'center';
+                div.style.padding = '8px 10px';
+                div.style.background = '#2a2a2a';
+                div.style.marginBottom = '6px';
+                div.style.borderRadius = '5px';
+
+                let infoDiv = document.createElement('div');
+                infoDiv.style.flex = '1';
+                infoDiv.style.cursor = 'pointer';
+                infoDiv.innerHTML = `
+                    <div style="font-size: 14px; font-weight: bold; color: #fff;">${item.name}</div>
+                    <div style="font-size: 11px; color: #aaa; margin-top: 2px;">${item.url || ''} <span style="background: #9146FF; color: white; padding: 1px 4px; border-radius: 3px; font-size: 9px; margin-left: 4px;">${(item.type || 'stream').toUpperCase()}</span></div>
                 `;
-                div.onclick = () => {
+                infoDiv.onclick = () => {
                     document.getElementById('streamInput').value = item.url || item.name;
                     detectAndPlay();
                     closePlaylist();
                 };
+
+                let btnGroup = document.createElement('div');
+                btnGroup.style.display = 'flex';
+                btnGroup.style.gap = '4px';
+                btnGroup.style.alignItems = 'center';
+
+                // Tombol Pindah Atas
+                let upBtn = document.createElement('button');
+                upBtn.innerHTML = '▲';
+                upBtn.title = 'Pindah ke atas';
+                upBtn.style.cssText = 'background: #333; color: #fff; border: 1px solid #555; border-radius: 3px; padding: 3px 6px; cursor: pointer; font-size: 11px;';
+                upBtn.disabled = index === 0;
+                if (index === 0) upBtn.style.opacity = '0.3';
+                upBtn.onclick = (e) => { e.stopPropagation(); movePlaylist(index, -1); };
+
+                // Tombol Pindah Bawah
+                let downBtn = document.createElement('button');
+                downBtn.innerHTML = '▼';
+                downBtn.title = 'Pindah ke bawah';
+                downBtn.style.cssText = 'background: #333; color: #fff; border: 1px solid #555; border-radius: 3px; padding: 3px 6px; cursor: pointer; font-size: 11px;';
+                downBtn.disabled = index === myStreams.length - 1;
+                if (index === myStreams.length - 1) downBtn.style.opacity = '0.3';
+                downBtn.onclick = (e) => { e.stopPropagation(); movePlaylist(index, 1); };
+
+                // Tombol Edit
+                let editBtn = document.createElement('button');
+                editBtn.innerHTML = '✎';
+                editBtn.title = 'Edit';
+                editBtn.style.cssText = 'background: #3a86ff; color: #fff; border: none; border-radius: 3px; padding: 3px 6px; cursor: pointer; font-size: 11px;';
+                editBtn.onclick = (e) => { e.stopPropagation(); openEditPlaylistModal(index); };
+
+                // Tombol Hapus
+                let delBtn = document.createElement('button');
+                delBtn.innerHTML = '✕';
+                delBtn.title = 'Hapus';
+                delBtn.style.cssText = 'background: #d9534f; color: #fff; border: none; border-radius: 3px; padding: 3px 6px; cursor: pointer; font-size: 11px;';
+                delBtn.onclick = (e) => { e.stopPropagation(); deletePlaylist(index); };
+
+                btnGroup.appendChild(upBtn);
+                btnGroup.appendChild(downBtn);
+                btnGroup.appendChild(editBtn);
+                btnGroup.appendChild(delBtn);
+
+                div.appendChild(infoDiv);
+                div.appendChild(btnGroup);
                 container.appendChild(div);
             });
+        }
+
+        let editingPlaylistIndex = null;
+
+        function openAddPlaylistModal() {
+            editingPlaylistIndex = null;
+            document.getElementById('playlist-form-title').innerText = 'Tambah Playlist';
+            document.getElementById('plEditName').value = '';
+            document.getElementById('plEditUrl').value = '';
+            document.getElementById('plEditType').value = 'youtube';
+            document.getElementById('playlist-form-modal').style.display = 'flex';
+        }
+
+        function openEditPlaylistModal(index) {
+            editingPlaylistIndex = index;
+            let item = myStreams[index];
+            document.getElementById('playlist-form-title').innerText = 'Edit Playlist';
+            document.getElementById('plEditName').value = item.name || '';
+            document.getElementById('plEditUrl').value = item.url || '';
+            document.getElementById('plEditType').value = item.type || 'youtube';
+            document.getElementById('playlist-form-modal').style.display = 'flex';
+        }
+
+        function closePlaylistFormModal() {
+            document.getElementById('playlist-form-modal').style.display = 'none';
+        }
+
+        function savePlaylistEntry() {
+            let name = document.getElementById('plEditName').value.trim();
+            let url = document.getElementById('plEditUrl').value.trim();
+            let type = document.getElementById('plEditType').value;
+
+            if (!name || !url) {
+                alert('Nama dan URL/Channel wajib diisi!');
+                return;
+            }
+
+            if (editingPlaylistIndex === null) {
+                myStreams.push({ name, url, type });
+            } else {
+                myStreams[editingPlaylistIndex] = { name, url, type };
+            }
+
+            closePlaylistFormModal();
+            renderPlaylist();
+        }
+
+        function deletePlaylist(index) {
+            if (confirm(`Hapus "${myStreams[index].name}" dari playlist?`)) {
+                myStreams.splice(index, 1);
+                renderPlaylist();
+            }
+        }
+
+        function movePlaylist(index, direction) {
+            let newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= myStreams.length) return;
+            let temp = myStreams[index];
+            myStreams[index] = myStreams[newIndex];
+            myStreams[newIndex] = temp;
+            renderPlaylist();
         }
 
         function openPlaylist() {
