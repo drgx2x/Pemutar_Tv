@@ -15,18 +15,13 @@ const myStreams = [
         "type": "youtube"
     },
     {
-        "name": "CNN",
-        "url": "https://www.youtube.com/watch?v=GotlA1KKWoo",
-        "type": "youtube"
-    },
-    {
         "name": "tvOne",
         "url": "https://www.youtube.com/watch?v=rQJoEpzKkNk",
         "type": "youtube"
     },
     {
-        "name": "Sky News",
-        "url": "https://www.youtube.com/watch?v=xDWQ3LkccY8",
+        "name": "SindoNews",
+        "url": "https://m.youtube.com/watch?v=hBPZXlzVlMM",
         "type": "youtube"
     },
     {
@@ -35,8 +30,13 @@ const myStreams = [
         "type": "youtube"
     },
     {
-        "name": "SindoNews",
-        "url": "https://m.youtube.com/watch?v=hBPZXlzVlMM",
+        "name": "Sky News",
+        "url": "https://www.youtube.com/watch?v=xDWQ3LkccY8",
+        "type": "youtube"
+    },
+    {
+        "name": "CNN",
+        "url": "https://www.youtube.com/watch?v=GotlA1KKWoo",
         "type": "youtube"
     },
     {
