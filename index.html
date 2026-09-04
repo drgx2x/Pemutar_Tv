@@ -27,6 +27,19 @@
             flex-shrink: 0;
         }
 
+        .nav-control-btn {
+            background: #2a2a2a;
+            color: white;
+            border: 1px solid #444;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .nav-control-btn:hover { background: #3a3a3a; }
+
         .playlist-btn { 
             background: #2a2a2a; 
             color: white; 
@@ -101,27 +114,6 @@
             flex-shrink: 0; 
             position: relative;
         }
-
-        .player-controls {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            display: flex;
-            gap: 8px;
-            z-index: 100;
-        }
-
-        .control-btn {
-            background: rgba(0,0,0,0.6);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            backdrop-filter: blur(4px);
-        }
-        .control-btn:hover { background: rgba(0,0,0,0.8); }
 
         iframe, #twitch-embed { width: 100%; height: 100%; border: none; }
 
@@ -221,6 +213,8 @@
 
     <div class="top-bar">
         <button class="playlist-btn" onclick="openPlaylist()">≡ List</button>
+        <button class="nav-control-btn" onclick="switchChannel(-1)">Prev</button>
+        <button class="nav-control-btn" onclick="switchChannel(1)">Next</button>
         <button class="sleep-btn" id="sleepBtn" onclick="openSleepModal()">💤</button>
         <input type="text" id="streamInput" placeholder="URL / Channel">
         <button class="play-btn" onclick="detectAndPlay()">Putar</button>
@@ -630,7 +624,6 @@
                 if (videoId) {
                     let hostname = window.location.hostname || "localhost";
                     playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-                    addPlayerControls(playerBox);
                     chatBox.innerHTML = `<iframe src="https://www.youtube.com/live_chat?v=${videoId}&embed_domain=${hostname}&dark_theme=true"></iframe>`;
                 } else {
                     playerBox.innerHTML = `<span style="color: red;">URL YouTube tidak valid</span>`;
@@ -659,7 +652,6 @@
                     layout: "video",
                     parent: parents
                 });
-                addPlayerControls(playerBox);
 
                 let chatHostname = window.location.hostname && window.location.hostname !== "" ? window.location.hostname : "localhost";
                 chatBox.innerHTML = `<iframe src="https://www.twitch.tv/embed/${channelName}/chat?parent=${chatHostname}&parent=localhost&parent=127.0.0.1&parent=capacitor.localhost&darkpopout"></iframe>`;
@@ -828,13 +820,6 @@
         }
 
         function addPlayerControls(container) {
-            let controls = document.createElement('div');
-            controls.className = 'player-controls';
-            controls.innerHTML = `
-                <button class="control-btn" onclick="switchChannel(-1)">Prev</button>
-                <button class="control-btn" onclick="switchChannel(1)">Next</button>
-            `;
-            container.appendChild(controls);
         }
     </script>
 </body>
