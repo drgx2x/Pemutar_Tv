@@ -25,6 +25,7 @@
             align-items: center; 
             margin-bottom: 8px; 
             flex-shrink: 0;
+            width: 100%;
         }
 
         .nav-control-btn {
@@ -68,7 +69,8 @@
         .sleep-btn.active { background: #d9534f; border-color: #d9534f; }
 
         input { 
-            flex-grow: 1; 
+            flex: 1 1 0%;
+            min-width: 50px;
             padding: 8px 10px; 
             font-size: 13px; 
             background: #1e1e1e;
@@ -167,6 +169,7 @@
         .dropdown {
             position: relative;
             display: inline-block;
+            flex-shrink: 0;
         }
         .dropbtn {
             background: #333;
