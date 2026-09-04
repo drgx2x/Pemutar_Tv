@@ -704,7 +704,30 @@
             
             document.getElementById('streamInput').value = item.url || item.name;
             detectAndPlay();
+            showNextPlayNotification(item.name);
             console.log(`Switched to: ${item.name}`);
+        }
+
+        function showNextPlayNotification(name) {
+            let playerBox = document.getElementById('player-box');
+            let notif = document.createElement('div');
+            notif.style.position = 'absolute';
+            notif.style.top = '10px';
+            notif.style.right = '10px';
+            notif.style.background = 'rgba(0, 0, 0, 0.75)';
+            notif.style.color = '#fff';
+            notif.style.padding = '8px 12px';
+            notif.style.borderRadius = '6px';
+            notif.style.fontSize = '12px';
+            notif.style.zIndex = '100';
+            notif.style.pointerEvents = 'none';
+            notif.style.backdropFilter = 'blur(4px)';
+            notif.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+            notif.innerHTML = `▶ Switched: <b>${name}</b>`;
+            
+            playerBox.style.position = 'relative';
+            playerBox.appendChild(notif);
+            setTimeout(() => notif.remove(), 3000);
         }
 
         function setSleepTimer(minutes) {
