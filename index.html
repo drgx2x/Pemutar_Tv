@@ -215,14 +215,17 @@
     <div class="top-bar">
         <button class="playlist-btn" onclick="openPlaylist()">≡ List</button>
         <button class="nav-control-btn" onclick="switchChannel(-1)">Prev</button>
+        
+        <!-- Box URL di antara Prev dan Next -->
+        <input type="text" id="streamInput" placeholder="URL / Channel" style="width: 200px;">
+        
         <button class="nav-control-btn" onclick="switchChannel(1)">Next</button>
         
-        <!-- Menu Dropdown Baru -->
+        <!-- Menu Dropdown -->
         <div class="dropdown">
             <button class="dropbtn" onclick="toggleMenu(event)">⚙️ Menu</button>
             <div class="dropdown-content" id="top-menu">
                 <div style="padding: 10px;">
-                    <input type="text" id="streamInput" placeholder="URL / Channel" style="width: 100%; margin-bottom: 8px;">
                     <div style="display: flex; gap: 5px;">
                         <button class="play-btn" onclick="detectAndPlay()" style="flex: 1;">Putar</button>
                         <button class="sleep-btn" id="sleepBtn" onclick="openSleepModal()">💤</button>
