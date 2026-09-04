@@ -330,42 +330,60 @@
                 div.setAttribute('draggable', 'true');
                 div.dataset.index = index;
 
-                // Handle Touch/Swipe Dragging for Mobile
+                // Handle Long Press / Touch Dragging & Reordering
+                let longPressTimer = null;
+                let isDraggingActive = false;
                 let touchStartY = 0;
-                let initialIndex = index;
 
                 div.addEventListener('touchstart', (e) => {
                     touchStartY = e.touches[0].clientY;
-                    initialIndex = index;
+                    isDraggingActive = false;
+
+                    // Baru bisa drag setelah menekan/hold selama 500ms
+                    longPressTimer = setTimeout(() => {
+                        isDraggingActive = true;
+                        div.classList.add('dragging');
+                        if (navigator.vibrate) navigator.vibrate(50); // Getar ringan saat mode drag aktif
+                    }, 500);
                 }, {passive: true});
 
                 div.addEventListener('touchmove', (e) => {
                     let currentY = e.touches[0].clientY;
                     let diffY = currentY - touchStartY;
-                    
-                    div.classList.add('dragging');
-                    div.style.transform = `translateY(${diffY}px)`;
 
-                    // Cari elemen di bawah posisi sentuh saat ini
-                    let elementBelow = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-                    let targetItem = elementBelow ? elementBelow.closest('.playlist-item') : null;
-                    
-                    if (targetItem && targetItem !== div) {
-                        let targetIndex = parseInt(targetItem.dataset.index);
-                        if (!isNaN(targetIndex) && targetIndex !== index) {
-                            // Pindahkan elemen di array sementara
-                            let movedItem = myStreams.splice(index, 1)[0];
-                            myStreams.splice(targetIndex, 0, movedItem);
-                            saveStreamsToStorage();
-                            renderPlaylist();
+                    // Jika bergerak signifikan sebelum timer long press selesai, batalkan hold
+                    if (!isDraggingActive && Math.abs(diffY) > 10) {
+                        clearTimeout(longPressTimer);
+                        return;
+                    }
+
+                    if (isDraggingActive) {
+                        div.style.transform = `translateY(${diffY}px)`;
+
+                        // Cari elemen di bawah posisi sentuh saat ini
+                        let elementBelow = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                        let targetItem = elementBelow ? elementBelow.closest('.playlist-item') : null;
+                        
+                        if (targetItem && targetItem !== div) {
+                            let targetIndex = parseInt(targetItem.dataset.index);
+                            if (!isNaN(targetIndex) && targetIndex !== index) {
+                                let movedItem = myStreams.splice(index, 1)[0];
+                                myStreams.splice(targetIndex, 0, movedItem);
+                                saveStreamsToStorage();
+                                renderPlaylist();
+                            }
                         }
                     }
                 }, {passive: true});
 
                 div.addEventListener('touchend', () => {
-                    div.classList.remove('dragging');
-                    div.style.transform = '';
-                    renderPlaylist();
+                    clearTimeout(longPressTimer);
+                    if (isDraggingActive) {
+                        div.classList.remove('dragging');
+                        div.style.transform = '';
+                        renderPlaylist();
+                    }
+                    isDraggingActive = false;
                 });
 
                 // HTML5 Drag and Drop for Desktop
