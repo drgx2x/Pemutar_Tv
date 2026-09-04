@@ -568,6 +568,12 @@
             let chatBox = document.getElementById('chat-box');
             if (!input) return;
 
+            // Cari indeks channel saat ini dari playlist (jika ada)
+            currentChannelIndex = -1;
+            if (typeof myStreams !== 'undefined' && myStreams && myStreams.length > 0) {
+                currentChannelIndex = myStreams.findIndex(s => (s.url || s.name) === input);
+            }
+
             playerBox.innerHTML = "";
             chatBox.innerHTML = "";
 
@@ -635,6 +641,52 @@
             if (event.target.id === 'sleep-modal') {
                 closeSleepModal();
             }
+        }
+
+        // --- Hold to Switch Channel Logic ---
+        let holdTimer = null;
+        let isHolding = false;
+
+        function initHoldEvents() {
+            const playerBox = document.getElementById('player-box');
+            
+            playerBox.addEventListener('mousedown', (e) => {
+                holdTimer = setTimeout(() => {
+                    isHolding = true;
+                    const rect = playerBox.getBoundingClientRect();
+                    const midY = rect.top + rect.height / 2;
+                    switchChannel(e.clientY < midY ? -1 : 1);
+                }, 800);
+            });
+            playerBox.addEventListener('mouseup', () => { clearTimeout(holdTimer); isHolding = false; });
+            playerBox.addEventListener('mouseleave', () => { clearTimeout(holdTimer); isHolding = false; });
+
+            playerBox.addEventListener('touchstart', (e) => {
+                holdTimer = setTimeout(() => {
+                    isHolding = true;
+                    const rect = playerBox.getBoundingClientRect();
+                    const midY = rect.top + rect.height / 2;
+                    switchChannel(e.touches[0].clientY < midY ? -1 : 1);
+                }, 800);
+            }, {passive: true});
+            playerBox.addEventListener('touchend', () => { clearTimeout(holdTimer); isHolding = false; });
+        }
+        
+        setTimeout(initHoldEvents, 1000);
+
+        function switchChannel(direction) {
+            if (typeof myStreams === 'undefined' || !myStreams || myStreams.length === 0) return;
+
+            let newIndex = currentChannelIndex + direction;
+            if (newIndex < 0) newIndex = myStreams.length - 1;
+            if (newIndex >= myStreams.length) newIndex = 0;
+
+            currentChannelIndex = newIndex;
+            let item = myStreams[newIndex];
+            
+            document.getElementById('streamInput').value = item.url || item.name;
+            detectAndPlay();
+            console.log(`Switched to: ${item.name}`);
         }
 
         function setSleepTimer(minutes) {
