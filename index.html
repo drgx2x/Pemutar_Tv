@@ -695,11 +695,17 @@
 
         function triggerSleep() {
             cancelSleepTimer();
+            
+            // Hentikan pemutaran dengan mengosongkan kontainer
             let playerBox = document.getElementById('player-box');
             let chatBox = document.getElementById('chat-box');
             
-            playerBox.innerHTML = `<span style="color: #777; font-size: 13px;">Stream dihentikan oleh Sleep Timer</span>`;
-            chatBox.innerHTML = `<div class="chat-placeholder">Sleep Timer Berakhir</div>`;
+            playerBox.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #777;">
+                    <div style="font-size: 48px; margin-bottom: 10px;">💤</div>
+                    <div>Sleep Timer Berakhir - Pemutaran Dihentikan</div>
+                </div>`;
+            chatBox.innerHTML = `<div class="chat-placeholder">Aplikasi dalam mode tidur</div>`;
             
             closeSleepModal();
         }
