@@ -184,12 +184,13 @@
             position: absolute;
             right: 0;
             background-color: #252525;
-            min-width: 120px;
+            min-width: 200px;
             box-shadow: 0px 8px 16px rgba(0,0,0,0.4);
             z-index: 1020;
             border-radius: 6px;
             border: 1px solid #444;
             overflow: hidden;
+            padding: 5px;
         }
         .dropdown-content button {
             color: #fff;
@@ -214,10 +215,21 @@
     <div class="top-bar">
         <button class="playlist-btn" onclick="openPlaylist()">≡ List</button>
         <button class="nav-control-btn" onclick="switchChannel(-1)">Prev</button>
-        <button class="play-btn" onclick="detectAndPlay()">Putar</button>
         <button class="nav-control-btn" onclick="switchChannel(1)">Next</button>
-        <button class="sleep-btn" id="sleepBtn" onclick="openSleepModal()">💤</button>
-        <input type="text" id="streamInput" placeholder="URL / Channel">
+        
+        <!-- Menu Dropdown Baru -->
+        <div class="dropdown">
+            <button class="dropbtn" onclick="toggleMenu(event)">⚙️ Menu</button>
+            <div class="dropdown-content" id="top-menu">
+                <div style="padding: 10px;">
+                    <input type="text" id="streamInput" placeholder="URL / Channel" style="width: 100%; margin-bottom: 8px;">
+                    <div style="display: flex; gap: 5px;">
+                        <button class="play-btn" onclick="detectAndPlay()" style="flex: 1;">Putar</button>
+                        <button class="sleep-btn" id="sleepBtn" onclick="openSleepModal()">💤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="player-wrapper">
@@ -330,6 +342,12 @@
                     }
                 }
             }
+        }
+
+        function toggleMenu(event) {
+            event.stopPropagation();
+            let dropdown = event.target.closest('.dropdown');
+            dropdown.classList.toggle('show');
         }
 
         function renderPlaylist() {
