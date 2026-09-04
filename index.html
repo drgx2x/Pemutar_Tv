@@ -172,13 +172,13 @@
             flex-shrink: 0;
         }
         .dropbtn {
-            background: #333;
+            background: #2a2a2a;
             color: white;
-            border: 1px solid #555;
-            padding: 4px 8px;
-            font-size: 14px;
+            border: 1px solid #444;
+            padding: 8px 12px;
+            font-size: 13px;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
         }
         .dropbtn:hover { background: #444; }
@@ -229,7 +229,7 @@
             <button class="dropbtn" onclick="toggleMenu(event)">⚙️ Menu</button>
             <div class="dropdown-content" id="top-menu">
                 <div style="padding: 10px;">
-                    <div style="display: flex; gap: 5px;">
+                    <div style="display: flex; gap: 5px; flex-direction: row;">
                         <button class="play-btn" onclick="detectAndPlay()" style="flex: 1;">Putar</button>
                         <button class="sleep-btn" id="sleepBtn" onclick="openSleepModal()">💤</button>
                     </div>
