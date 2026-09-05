@@ -110,18 +110,18 @@ const myStreams = [
         "type": "youtube"
     },
     {
+        "name": "Estv",
+        "url": "https://www.twitch.tv/estv_esportstv",
+        "type": "twitch"
+    },
+    {
+        "name": "Eslcs",
+        "url": "https://www.twitch.tv/eslcs",
+        "type": "twitch"
+    },
+    {
         "name": "Rifftrax",
         "url": "https://www.twitch.tv/rifftrax",
-        "type": "twitch"
-    },
-    {
-        "name": "Lofi Girl",
-        "url": "https://www.twitch.tv/lofigirl",
-        "type": "twitch"
-    },
-    {
-        "name": "Leekbeats",
-        "url": "https://www.twitch.tv/leekbeats",
         "type": "twitch"
     },
     {
@@ -155,13 +155,13 @@ const myStreams = [
         "type": "twitch"
     },
     {
-        "name": "Eslcs",
-        "url": "https://www.twitch.tv/eslcs",
+        "name": "Lofi Girl",
+        "url": "https://www.twitch.tv/lofigirl",
         "type": "twitch"
     },
     {
-        "name": "Blastpremier",
-        "url": "https://www.twitch.tv/blastpremier",
+        "name": "Leekbeats",
+        "url": "https://www.twitch.tv/leekbeats",
         "type": "twitch"
     }
 ];
