@@ -6,7 +6,7 @@ const myStreams = [
     },
     {
         "name": "Official iNews",
-        "url": "https://www.youtube.com/watch?v=WHTPYAvakTg",
+        "url": "https://m.youtube.com/watch?v=UMe1AKUyUN0",
         "type": "youtube"
     },
     {
