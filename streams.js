@@ -6,7 +6,7 @@ const myStreams = [
     },
     {
         "name": "Official iNews",
-        "url": "https://m.youtube.com/watch?v=UMe1AKUyUN0",
+        "url": "https://www.youtube.com/watch?v=UMe1AKUyUN0",
         "type": "youtube"
     },
     {
@@ -21,7 +21,7 @@ const myStreams = [
     },
     {
         "name": "SindoNews",
-        "url": "https://m.youtube.com/watch?v=hBPZXlzVlMM",
+        "url": "https://www.youtube.com/watch?v=hBPZXlzVlMM",
         "type": "youtube"
     },
     {
