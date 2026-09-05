@@ -637,8 +637,15 @@
 
             if (input.includes("youtube.com") || input.includes("youtu.be")) {
                 let videoId = "";
+                let urlObj;
+                try {
+                    urlObj = new URL(input);
+                } catch(e) {}
+
                 if (input.includes("youtu.be/")) {
                     videoId = input.split("youtu.be/")[1].split("?")[0];
+                } else if (urlObj && urlObj.pathname.startsWith("/live/")) {
+                    videoId = urlObj.pathname.split("/")[2];
                 } else if (input.includes("watch?v=")) {
                     videoId = input.split("watch?v=")[1].split("&")[0];
                 } else if (input.includes("embed/")) {
