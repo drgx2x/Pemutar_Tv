@@ -20,11 +20,6 @@ const myStreams = [
         "type": "youtube"
     },
     {
-        "name": "SindoNews",
-        "url": "https://www.youtube.com/watch?v=hBPZXlzVlMM",
-        "type": "youtube"
-    },
-    {
         "name": "MetroTV",
         "url": "https://www.youtube.com/watch?v=oUYnZv_G82Q",
         "type": "youtube"
@@ -67,6 +62,11 @@ const myStreams = [
     {
         "name": "Fox News",
         "url": "https://www.youtube.com/watch?v=C96oohpWBGw",
+        "type": "youtube"
+    },
+    {
+        "name": "WRAL",
+        "url": "https://m.youtube.com/watch?v=PeTHS4MivaE",
         "type": "youtube"
     },
     {
