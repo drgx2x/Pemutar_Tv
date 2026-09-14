@@ -1,67 +1,67 @@
 const myStreams = [
     {
         "name": "KOMPAS TV",
-        "url": "https://www.youtube.com/watch?v=DOOrIxw5xOw",
+        "url": "https://m.youtube.com/watch?v=DOOrIxw5xOw",
         "type": "youtube"
     },
     {
         "name": "Official iNews",
-        "url": "https://www.youtube.com/watch?v=UMe1AKUyUN0",
+        "url": "https://m.youtube.com/watch?v=UMe1AKUyUN0",
         "type": "youtube"
     },
     {
         "name": "CNN Indonesia",
-        "url": "https://www.youtube.com/watch?v=PDDOkUq33Sw",
+        "url": "https://m.youtube.com/watch?v=PDDOkUq33Sw",
         "type": "youtube"
     },
     {
         "name": "tvOne",
-        "url": "https://www.youtube.com/watch?v=rQJoEpzKkNk",
+        "url": "https://m.youtube.com/watch?v=rQJoEpzKkNk",
         "type": "youtube"
     },
     {
         "name": "MetroTV",
-        "url": "https://www.youtube.com/watch?v=oUYnZv_G82Q",
+        "url": "https://m.youtube.com/watch?v=oUYnZv_G82Q",
         "type": "youtube"
     },
     {
         "name": "Sky News",
-        "url": "https://www.youtube.com/watch?v=xDWQ3LkccY8",
+        "url": "https://m.youtube.com/watch?v=xDWQ3LkccY8",
         "type": "youtube"
     },
     {
         "name": "CNN",
-        "url": "https://www.youtube.com/watch?v=GotlA1KKWoo",
+        "url": "https://m.youtube.com/watch?v=GotlA1KKWoo",
         "type": "youtube"
     },
     {
         "name": "ABC News",
-        "url": "https://www.youtube.com/watch?v=iipR5yUp36o",
+        "url": "https://m.youtube.com/watch?v=iipR5yUp36o",
         "type": "youtube"
     },
     {
         "name": "ABC News Australia",
-        "url": "https://www.youtube.com/watch?v=vOTiJkg1voo",
+        "url": "https://m.youtube.com/watch?v=vOTiJkg1voo",
         "type": "youtube"
     },
     {
         "name": "Al Jazeera",
-        "url": "https://www.youtube.com/watch?v=gCNeDWCI0vo",
+        "url": "https://m.youtube.com/watch?v=gCNeDWCI0vo",
         "type": "youtube"
     },
     {
         "name": "GB News",
-        "url": "https://www.youtube.com/watch?v=I8E6eDmhegY",
+        "url": "https://m.youtube.com/watch?v=I8E6eDmhegY",
         "type": "youtube"
     },
     {
         "name": "France 24 English",
-        "url": "https://www.youtube.com/watch?v=HvZt-nh9sGg",
+        "url": "https://m.youtube.com/watch?v=HvZt-nh9sGg",
         "type": "youtube"
     },
     {
         "name": "Fox News",
-        "url": "https://www.youtube.com/watch?v=C96oohpWBGw",
+        "url": "https://m.youtube.com/watch?v=C96oohpWBGw",
         "type": "youtube"
     },
     {
@@ -71,42 +71,42 @@ const myStreams = [
     },
     {
         "name": "Bloomberg",
-        "url": "https://www.youtube.com/watch?v=QB5BNdBFujE",
+        "url": "https://m.youtube.com/watch?v=QB5BNdBFujE",
         "type": "youtube"
     },
     {
         "name": "Yahoo Finance",
-        "url": "https://www.youtube.com/watch?v=KQp-e_XQnDE",
+        "url": "https://m.youtube.com/watch?v=KQp-e_XQnDE",
         "type": "youtube"
     },
     {
         "name": "Schwab Network",
-        "url": "https://www.youtube.com/watch?v=3etkI14QncQ",
+        "url": "https://m.youtube.com/watch?v=3etkI14QncQ",
         "type": "youtube"
     },
     {
         "name": "TalkTV",
-        "url": "https://www.youtube.com/watch?v=DFYaNjzI1aI",
+        "url": "https://m.youtube.com/watch?v=DFYaNjzI1aI",
         "type": "youtube"
     },
     {
         "name": "TalkSports",
-        "url": "https://www.youtube.com/watch?v=uLWEssCrXYc",
+        "url": "https://m.youtube.com/watch?v=uLWEssCrXYc",
         "type": "youtube"
     },
     {
         "name": "MSMojo",
-        "url": "https://www.youtube.com/watch?v=9gtxyOwIBxs",
+        "url": "https://m.youtube.com/watch?v=9gtxyOwIBxs",
         "type": "youtube"
     },
     {
         "name": "WatchMojo Top 10",
-        "url": "https://www.youtube.com/watch?v=AHa_Uz50sJk",
+        "url": "https://m.youtube.com/watch?v=AHa_Uz50sJk",
         "type": "youtube"
     },
     {
         "name": "WatchMojo True Crime",
-        "url": "https://www.youtube.com/watch?v=nvfP37Ym0yA",
+        "url": "https://m.youtube.com/watch?v=nvfP37Ym0yA",
         "type": "youtube"
     },
     {
