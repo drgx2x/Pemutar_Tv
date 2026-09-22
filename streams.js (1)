@@ -1,0 +1,177 @@
+const myStreams = [
+    {
+        "name": "KOMPAS TV",
+        "url": "https://m.youtube.com/watch?v=DOOrIxw5xOw",
+        "type": "youtube"
+    },
+    {
+        "name": "Official iNews",
+        "url": "https://m.youtube.com/watch?v=UMe1AKUyUN0",
+        "type": "youtube"
+    },
+    {
+        "name": "CNN Indonesia",
+        "url": "https://m.youtube.com/watch?v=PDDOkUq33Sw",
+        "type": "youtube"
+    },
+    {
+        "name": "tvOne",
+        "url": "https://m.youtube.com/watch?v=rQJoEpzKkNk",
+        "type": "youtube"
+    },
+    {
+        "name": "MetroTV",
+        "url": "https://m.youtube.com/watch?v=oUYnZv_G82Q",
+        "type": "youtube"
+    },
+    {
+        "name": "Sky News",
+        "url": "https://m.youtube.com/watch?v=xDWQ3LkccY8",
+        "type": "youtube"
+    },
+    {
+        "name": "CNN",
+        "url": "https://m.youtube.com/watch?v=GotlA1KKWoo",
+        "type": "youtube"
+    },
+    {
+        "name": "ABC News",
+        "url": "https://m.youtube.com/watch?v=iipR5yUp36o",
+        "type": "youtube"
+    },
+    {
+        "name": "ABC News Australia",
+        "url": "https://m.youtube.com/watch?v=vOTiJkg1voo",
+        "type": "youtube"
+    },
+    {
+        "name": "Al Jazeera",
+        "url": "https://m.youtube.com/watch?v=gCNeDWCI0vo",
+        "type": "youtube"
+    },
+    {
+        "name": "GB News",
+        "url": "https://m.youtube.com/watch?v=I8E6eDmhegY",
+        "type": "youtube"
+    },
+    {
+        "name": "France 24 English",
+        "url": "https://m.youtube.com/watch?v=HvZt-nh9sGg",
+        "type": "youtube"
+    },
+    {
+        "name": "Fox News",
+        "url": "https://m.youtube.com/watch?v=C96oohpWBGw",
+        "type": "youtube"
+    },
+    {
+        "name": "CNA Insider",
+        "url": "https://www.youtube.com/watch?v=fSUMKrxPEd8",
+        "type": "youtube"
+    },
+    {
+        "name": "NHK World",
+        "url": "https://www.youtube.com/watch?v=IimtbuqYIE8",
+        "type": "youtube"
+    },
+    {
+        "name": "WRAL",
+        "url": "https://m.youtube.com/watch?v=PeTHS4MivaE",
+        "type": "youtube"
+    },
+    {
+        "name": "Bloomberg",
+        "url": "https://m.youtube.com/watch?v=QB5BNdBFujE",
+        "type": "youtube"
+    },
+    {
+        "name": "Yahoo Finance",
+        "url": "https://m.youtube.com/watch?v=KQp-e_XQnDE",
+        "type": "youtube"
+    },
+    {
+        "name": "Schwab Network",
+        "url": "https://m.youtube.com/watch?v=3etkI14QncQ",
+        "type": "youtube"
+    },
+    {
+        "name": "TalkTV",
+        "url": "https://m.youtube.com/watch?v=DFYaNjzI1aI",
+        "type": "youtube"
+    },
+    {
+        "name": "TalkSports",
+        "url": "https://m.youtube.com/watch?v=uLWEssCrXYc",
+        "type": "youtube"
+    },
+    {
+        "name": "MSMojo",
+        "url": "https://m.youtube.com/watch?v=9gtxyOwIBxs",
+        "type": "youtube"
+    },
+    {
+        "name": "WatchMojo Top 10",
+        "url": "https://m.youtube.com/watch?v=AHa_Uz50sJk",
+        "type": "youtube"
+    },
+    {
+        "name": "WatchMojo True Crime",
+        "url": "https://m.youtube.com/watch?v=nvfP37Ym0yA",
+        "type": "youtube"
+    },
+    {
+        "name": "Estv",
+        "url": "https://www.twitch.tv/estv_esportstv",
+        "type": "twitch"
+    },
+    {
+        "name": "Eslcs",
+        "url": "https://www.twitch.tv/eslcs",
+        "type": "twitch"
+    },
+    {
+        "name": "Rifftrax",
+        "url": "https://www.twitch.tv/rifftrax",
+        "type": "twitch"
+    },
+    {
+        "name": "Yu-Gi-Oh!",
+        "url": "https://www.twitch.tv/yugioh_subs",
+        "type": "twitch"
+    },
+    {
+        "name": "Police Chase",
+        "url": "https://www.twitch.tv/policechasenetwork247",
+        "type": "twitch"
+    },
+    {
+        "name": "RetroCrush",
+        "url": "https://www.twitch.tv/retrocrush_tv",
+        "type": "twitch"
+    },
+    {
+        "name": "FailArmy",
+        "url": "https://www.twitch.tv/failarmy",
+        "type": "twitch"
+    },
+    {
+        "name": "The Asylum",
+        "url": "https://www.twitch.tv/theasylummovies",
+        "type": "twitch"
+    },
+    {
+        "name": "Tokyo Street View",
+        "url": "https://www.twitch.tv/tokyostreetview",
+        "type": "twitch"
+    },
+    {
+        "name": "Lofi Girl",
+        "url": "https://www.twitch.tv/lofigirl",
+        "type": "twitch"
+    },
+    {
+        "name": "Leekbeats",
+        "url": "https://www.twitch.tv/leekbeats",
+        "type": "twitch"
+    }
+];
