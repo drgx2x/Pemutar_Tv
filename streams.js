@@ -65,6 +65,16 @@ const myStreams = [
         "type": "youtube"
     },
     {
+        "name": "CNA Insider",
+        "url": "https://www.youtube.com/watch?v=fSUMKrxPEd8",
+        "type": "youtube"
+    },
+    {
+        "name": "NHK World",
+        "url": "https://www.youtube.com/watch?v=IimtbuqYIE8",
+        "type": "youtube"
+    },
+    {
         "name": "WRAL",
         "url": "https://m.youtube.com/watch?v=PeTHS4MivaE",
         "type": "youtube"
